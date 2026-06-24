@@ -795,12 +795,13 @@ if uploaded_file is not None:
             
             # 判定用テキストの作成（商品名、カテゴリ、および追加テキスト）
             csv_path = df['path'] if 'path' in df.columns else pd.Series('', index=df.index)
-            mapped_cat = df['car_brand'].map(CATEGORY_MAP).fillna('')
+            car_brand_series = df.get('car_brand', pd.Series([''] * len(df)))
+            mapped_cat = car_brand_series.map(CATEGORY_MAP).fillna('')
             target_text = (
                 df['name'].fillna('') + ' ' + 
                 csv_path.fillna('') + ' ' + 
                 mapped_cat.fillna('') + ' ' + 
-                df['car_brand'].fillna('') + ' ' +
+                car_brand_series.fillna('') + ' ' +
                 selected_path + ' ' + 
                 additional_clean
             )
@@ -1111,7 +1112,7 @@ if uploaded_file is not None:
                 ''
             )
             
-            repeated_car_brand = df['car_brand'].loc[repeated_index].values
+            repeated_car_brand = df.get('car_brand', pd.Series([''] * len(df))).loc[repeated_index].values
             df_normal['商品属性（値）14'] = np.where(sku_mask, repeated_car_brand, '')
             
             row3_mask = (np.arange(len(df_normal)) % 4 == 2)
@@ -1176,7 +1177,7 @@ if uploaded_file is not None:
             cat_row3_mask = (np.arange(len(df_cat)) % 3 == 2)
             
             # 1行目「表示先カテゴリ」への車種カテゴリマッピングの適用
-            mapped_categories = df['car_brand'].map(CATEGORY_MAP).fillna('')
+            mapped_categories = df.get('car_brand', pd.Series([''] * len(df))).map(CATEGORY_MAP).fillna('')
             expanded_categories = mapped_categories.loc[repeated_index_cat].values
             df_cat.loc[cat_row1_mask, '表示先カテゴリ'] = expanded_categories[cat_row1_mask]
             
