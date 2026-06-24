@@ -639,7 +639,7 @@ def check_notesiso(image_urls_str):
 
 def determine_medama_item(brand_code):
     if pd.isna(brand_code) or str(brand_code).strip() == "" or str(brand_code).lower() == "nan":
-        return "目玉 共通"
+        return "目玉　共通"
     
     try:
         f_val = float(brand_code)
@@ -653,9 +653,9 @@ def determine_medama_item(brand_code):
     if code_str == "53377":
         return "目玉 プール"
     elif code_str in BRAND_CODE_MAP:
-        return f"目玉 {BRAND_CODE_MAP[code_str]}"
+        return f"目玉　{BRAND_CODE_MAP[code_str]}"
     else:
-        return "目玉 共通"
+        return "目玉　共通"
 
 def truncate_catchcopy(text, max_bytes=174):
     if pd.isna(text):
@@ -1167,13 +1167,6 @@ if uploaded_file is not None:
             df_normal['商品管理番号（商品URL）'] = df_normal['商品管理番号（商品URL）'].str.lower()
             df_cat['商品管理番号（商品URL）'] = df_cat['商品管理番号（商品URL）'].str.lower()
 
-            # 目玉商品の全角・半角スペース調整
-            cols = ['PC用キャッチコピー', 'スマートフォン用キャッチコピー', 'キャッチコピー']
-            for col in cols:
-                if col in df_normal.columns:
-                    df_normal[col] = df_normal[col].fillna('')
-                    df_normal[col] = df_normal[col].str.replace(r'目玉 +', '目玉　', regex=True)
-                    df_normal[col] = df_normal[col].str.replace('目玉　プール', '目玉 プール', regex=False)
 
             # キャッチコピーの174byte制限とスマートカット処理
             df_normal['キャッチコピー'] = df_normal['キャッチコピー'].apply(truncate_catchcopy)
