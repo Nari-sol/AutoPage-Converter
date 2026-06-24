@@ -428,8 +428,8 @@ target_header_supplies = '''<center><IMG SRC="https://shopping.c.yimg.jp/lib/sol
 
 rakuten_header = """<div align="left"><img src="https://image.rakuten.co.jp/s-o-l/cabinet/ninteimb.gif" border="0"><br><table border="0" cellpadding="1" cellspacing="1"><tbody><tr><td bgcolor="#999999" height="44" width="745" align="left"><center><b><font size="+1">商品詳細</font></b></center><table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0" width="745"><tbody><tr height="25"><td bgcolor="#ffffff" width="745" align="left"><font size="-1">"""
 
-# エイリアス定数の定義 (PC用)
-rakuten_header_supplies = rakuten_header
+# 用品専用PCヘッダーの定義
+rakuten_header_supplies = """<div align="left"><img src="https://image.rakuten.co.jp/s-o-l/cabinet/ninteimb.gif" border="0"><br><table border="0" cellpadding="1" cellspacing="1"><tbody><tr><td bgcolor="#999999" height="44" width="745" align="left"><center><b><font size="+1">商品詳細</font></b></center><table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0" width="745"><tbody><tr height="25"><td bgcolor="#ffffff" width="745" align="left"><font size="-1"><font size="-1">"""
 rakuten_header_parts010 = rakuten_header
 rakuten_header_parts03 = rakuten_header
 
@@ -445,6 +445,9 @@ target_footer_parts010 = target_footer
 
 # 1. PC用 共通フッター (通常配送用)
 COMMON_FOOTER = """<div align="left"><table width="748"><tbody><tr><td align="left"></td></tr></tbody></table></div><div align="left"><table bgcolor="#999999" border="0" cellpadding="0" cellspacing="1" width="745" height="518"><tbody><tr><td align="center" width="745" colspan="2"><b><font size="+1">INFORMATION</font></b></td></tr><tr><td colspan="2"><table bgcolor="#ffffff" border="0" cellpadding="5" cellspacing="1" width="745"><tbody><tr><td valign="top" align="left" width="360" height="467"><table border="0" cellpadding="3" cellspacing="1" width="355"><tbody><tr><td bgcolor="#f0f0f0" height="16"><font color="#000000"><b>●お支払いについて</b></font></td></tr></tbody></table><table border="0" cellpadding="3" cellspacing="1" width="355"><tbody><tr><td><font color="#000000" size="2">・クレジットカード決済<br>・銀行振込（前払）<br>・セブンイレブン（前払）<br>・ローソン、郵便局ATM等（前払）<br>・後払い決済<br>・代金引換（現金のみ）</font></td></tr></tbody></table><table border="0" cellpadding="3" cellspacing="1" width="355"><tbody><tr><td bgcolor="#f0f0f0" height="16"><font color="#000000"><b>●発送方法について</b></font></td></tr></tbody></table><table border="0" cellpadding="3" cellspacing="1" width="355"><tbody><tr><td><font color="#000000" size="2">佐川急便または、西濃運輸・ゆうパック・クロネコヤマト・福山通運など当社指定の運送会社にて発送となります。<BR>※運送便のご指定は一切できません。<BR><BR>営業所留めを希望される場合、ご注文時にご希望の営業所名・営業所住所をご要望欄へご指定下さい。<BR>※発送予定の運送会社を確認されたい方は、ご注文前に必ずお問い合わせください。<br></font></td></tr><tr><td bgcolor="#f0f0f0" color="#000000"><b>●発送のタイミングについて</b></font></td></tr></tbody></table><table border="0" cellpadding="3" cellspacing="1" width="355"><tbody><tr><td><font color="#ff0000" size="2"><b>当日発送18時まで可能です。</b></font><font color="#000000" size="2"><br>ご注文のタイミングによっては、当日発送が出来ない場合がございますのでご了承下さい。<br><br>※下記該当の場合は当日発送できません。<br>・当店が休みの場合（翌営業日の発送になります）。<br>・お支払方法が銀行振込みで、18時までにお振込みの確認が取れなかった場合(15時以降のお振込みの場合、当社着金が翌営業日になる可能性がございます)。<br><br>決済の審査が必要なお支払い方法（クレジットカード・後払い決済）をご選択された場合、<br>楽天の審査にお時間をいただくことがあり、当日発送ができない場合がございます。予めご了承ください。<br>※銀行振込、コンビニお支払い等、前払い制の決済方法をご選択された場合は、ご入金確認が完了してからの発送となります。</font></font></td></tr></tbody></table></td><td valign="top" align="left" width="360"><table border="0" cellpadding="3" cellspacing="1" width="360"><tbody><tr><td bgcolor="#f0f0f0" colspan="2"><b>●保証について</b></td></tr><tr><td colspan="2"><font color="#000000" size="2">商品到着後6か月間の商品保証を致します。<br>当店側のミスでお手元に届いた商品が違った場合は、商品到着後14日以内での対応となりますので、速やかな商品確認をお願い致します。<br>保証内容はご購入頂いた商品のみとなります。<br>万が一商品に不具合が生じた場合新たに商品のご手配をさせて頂きますが、ご手配できない場合には商品代金のみご返金させて頂きます。<br>商品交換時に発生する費用および損害等は保証できませんのでご了承下さい。<br>取付ミスによる不具合や破損、加工済は保証対象外となります。</font></td></tr><tr><td bgcolor="#f0f0f0" colspan="2"><b>●お取引に関して</b></td></tr><tr><td colspan="2"><font color="#000000" size="2">お振込でお支払の際は、ご注文後5営業日以内にお手続きお願い致します。ご連絡やお手続き頂けない場合には、「お客様都合」によるキャンセルをさせて頂く場合がございます。ご注意ください。<br><br>ご注文の場合には同意されたものとみなさせて頂きますので、ご不明な点がある場合は、必ずご注文前にお問い合わせ下さい。</font></td></tr><tr><td bgcolor="#f0f0f0" colspan="2"><b>●その他</b></td></tr><tr><td colspan="2"><font color="#000000" size="2">パッケージにダメージがある場合が御座います。<br>写真撮影の為、パッケージを開封する場合が御座います。<br><br><a href="https://www.rakuten.co.jp/s-o-l/info2.html">SHOPPING GUIDE</a>をご確認の上ご注文お願いします。</font></td></tr><tr><td bgcolor="#f0f0f0" colspan="2"><b>●お問い合わせ先</b></td></tr><tr><td colspan="2"><font color="#000000" size="2">【株式会社エスオーエル】<br>〒221-0031<br>神奈川県横浜市神奈川区新浦島町一丁目1番地25 <br>GRC横浜ベイリサーチパーク 10階<br>TEL：045-450-6218 / FAX：045-330-4015<br>e-mail：<a href="mailto:sol-info1@s-o-l.co.jp">sol-info1@s-o-l.co.jp</a><br><font size="-1">営業時間<font color="#000000" size="2">：10：00〜18：00<br>(土・日・祝祭日を除く)</font></font></td></tr><tr><td bgcolor="#f0f0f0" colspan="2"><font color="#000000"><b>●出荷倉庫</b></font></td></tr><tr><td width="356" colspan="2"><font size="-1"><font color="#000000" size="2"><font size="-1">【株式会社エスオーエル パーツセンター】<BR>〒292-0824<BR>千葉県木更津市小浜276-3</font></font></font></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></div>"""
+
+# 1-2. PC用 共通フッター (用品用、保証14日)
+COMMON_FOOTER_SUPPLIES = """<div align="left"><table width="748"><tbody><tr><td align="left"></td></tr></tbody></table></div><div align="left"><table bgcolor="#999999" border="0" cellpadding="0" cellspacing="1" width="745" height="518"><tbody><tr><td align="center" width="745" colspan="2"><b><font size="+1">INFORMATION</font></b></td></tr><tr><td colspan="2"><table bgcolor="#ffffff" border="0" cellpadding="5" cellspacing="1" width="745"><tbody><tr><td valign="top" align="left" width="360" height="467"><table border="0" cellpadding="3" cellspacing="1" width="355"><tbody><tr><td bgcolor="#f0f0f0" height="16"><font color="#000000"><b>●お支払いについて</b></font></td></tr></tbody></table><table border="0" cellpadding="3" cellspacing="1" width="355"><tbody><tr><td><font color="#000000" size="2">・クレジットカード決済<br>・銀行振込（前払）<br>・セブンイレブン（前払）<br>・ローソン、郵便局ATM等（前払）<br>・後払い決済<br>・代金引換（現金のみ）</font></td></tr></tbody></table><table border="0" cellpadding="3" cellspacing="1" width="355"><tbody><tr><td bgcolor="#f0f0f0" height="16"><font color="#000000"><b>●発送方法について</b></font></td></tr></tbody></table><table border="0" cellpadding="3" cellspacing="1" width="355"><tbody><tr><td><font color="#000000" size="2">佐川急便または、西濃運輸・ゆうパック・クロネコヤマト・福山通運など当社指定の運送会社にて発送となります。<BR>※運送便のご指定は一切できません。<BR><BR>営業所留めを希望される場合、ご注文時にご希望の営業所名・営業所住所をご要望欄へご指定下さい。<BR>※発送予定の運送会社を確認されたい方は、ご注文前に必ずお問い合わせください。<br></font></td></tr><tr><td bgcolor="#f0f0f0" color="#000000"><b>●発送のタイミングについて</b></font></td></tr></tbody></table><table border="0" cellpadding="3" cellspacing="1" width="355"><tbody><tr><td><font color="#ff0000" size="2"><b>当日発送18時まで可能です。</b></font><font color="#000000" size="2"><br>ご注文のタイミングによっては、当日発送が出来ない場合がございますのでご了承下さい。<br><br>※下記該当の場合は当日発送できません。<br>・当店が休みの場合（翌営業日の発送になります）。<br>・お支払方法が銀行振込みで、18時までにお振込みの確認が取れなかった場合(15時以降のお振込みの場合、当社着金が翌営業日になる可能性がございます)。<br><br>決済の審査が必要なお支払い方法（クレジットカード・後払い決済）をご選択された場合、<br>楽天の審査にお時間をいただくことがあり、当日発送ができない場合がございます。予めご了承ください。<br>※銀行振込、コンビニお支払い等、前払い制の決済方法をご選択された場合は、ご入金確認が完了してからの発送となります。</font></font></td></tr></tbody></table></td><td valign="top" align="left" width="360"><table border="0" cellpadding="3" cellspacing="1" width="360"><tbody><tr><td bgcolor="#f0f0f0" colspan="2"><b>●保証について</b></td></tr><tr><td colspan="2"><font color="#000000" size="2">商品到着後14日以内の保証となります。<br>当店側のミスでお手元に届いた商品が違った場合は、商品到着後14日以内での対応となりますので、速やかな商品確認をお願い致します。<br>保証内容はご購入頂いた商品のみとなります。<br>万が一商品に不具合が生じた場合新たに商品のご手配をさせて頂きますが、ご手配できない場合には商品代金のみご返金させて頂きます。<br>商品交換時に発生する費用および損害等は保証できませんのでご了承下さい。<br>保証申請時には商品の不良申請書または診断結果および診断書【コピーでも可】・お車の車検証をご提出いただく必要がございます。<br>また症状や状態によっては商品の状態の確認がとれるお写真をいただく場合もございます。<br>取付ミスによる不具合や破損、加工済は保証対象外となります。</font></td></tr><tr><td bgcolor="#f0f0f0" colspan="2"><b>●お取引に関して</b></td></tr><tr><td colspan="2"><font color="#000000" size="2">お振込でお支払の際は、ご注文後5営業日以内にお手続きお願い致します。ご連絡やお手続き頂けない場合には、「お客様都合」によるキャンセルをさせて頂く場合がございます。ご注意ください。<br><br>ご注文の場合には同意されたものとみなさせて頂きますので、ご不明な点がある場合は、必ずご注文前にお問い合わせ下さい。</font></td></tr><tr><td bgcolor="#f0f0f0" colspan="2"><b>●その他</b></td></tr><tr><td colspan="2"><font color="#000000" size="2">パッケージにダメージがある場合が御座います。<br>写真撮影の為、パッケージを開封する場合が御座います。<br><br><a href="https://www.rakuten.co.jp/s-o-l/info2.html">SHOPPING GUIDE</a>をご確認の上ご注文お願いします。</font></td></tr><tr><td bgcolor="#f0f0f0" colspan="2"><b>●お問い合わせ先</b></td></tr><tr><td colspan="2"><font color="#000000" size="2">【株式会社エスオーエル】<br>〒221-0031<br>神奈川県横浜市神奈川区新浦島町一丁目1番地25 <br>GRC横浜ベイリサーチパーク 10階<br>TEL：045-450-6218 / FAX：045-330-4015<br>e-mail：<a href="mailto:sol-info1@s-o-l.co.jp">sol-info1@s-o-l.co.jp</a><br><font size="-1">営業時間<font color="#000000" size="2">：10：00〜18：00<br>(土・日・祝祭日を除く)</font></font></td></tr><tr><td bgcolor="#f0f0f0" colspan="2"><font color="#000000"><b>●出荷倉庫</b></font></td></tr><tr><td width="356" colspan="2"><font size="-1"><font color="#000000" size="2"><font size="-1">【株式会社エスオーエル パーツセンター】<BR>〒292-0824<BR>千葉県木更津市小浜276-3</font></font></font></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></div>"""
 
 # 2. PC用 共通フッター (クリックポスト用)
 COMMON_FOOTER_CLICKPOST = """<div align="left"><table width="748"><tbody><tr><td align="left"></td></tr></tbody></table></div><div align="left"><table bgcolor="#999999" border="0" cellpadding="0" cellspacing="1" width="745" height="518"><tbody><tr><td align="center" width="745" colspan="2"><b><font size="+1">INFORMATION</font></b></td></tr><tr><td colspan="2"><table bgcolor="#ffffff" border="0" cellpadding="5" cellspacing="1" width="745"><tbody><tr><td valign="top" align="left" width="360" height="467"><table border="0" cellpadding="3" cellspacing="1" width="355"><tbody><tr><td bgcolor="#f0f0f0" height="16"><font color="#000000"><b>●お支払いについて</b></font></td></tr></tbody></table><table border="0" cellpadding="3" cellspacing="1" width="355"><tbody><tr><td><font color="#000000" size="2">・クレジットカード決済<br>・銀行振込（前払）<br>・セブンイレブン（前払）<br>・ローソン、郵便局ATM等（前払）<br>・後払い決済</font></td></tr></tbody></table><table border="0" cellpadding="3" cellspacing="1" width="355"><tbody><tr><td bgcolor="#f0f0f0" height="16"><font color="#000000"><b>●発送方法について</b></font></td></tr></tbody></table><table border="0" cellpadding="3" cellspacing="1" width="355"><tbody><tr><td><font color="#000000" size="2">クリックポストでの発送になります。<br><br>・日時指定や代引きは出来ません。<br>・手渡しではなく、ポストへの投函になります。<br>・配送日数はおおむね3日前後になります。<br>・追跡可能ですが、紛失や破損等による保証はありませんのでご了承の上ご購入お願いします。<br>・発送は発送連絡を行わせて頂いた当日の夕方、ポストへ投函させて頂きます。<br>・当方の地域柄、集荷時間等の関係上、追跡番号がインターネット上に反映されるに1〜2日程度かかる場合がございます。予めご了承ください。<br>例：発送連絡日(20XX/4/1)→ネット上の集荷日(20XX/4/3)<br></font></td></tr><tr><td bgcolor="#f0f0f0" color="#000000"><b>●発送のタイミングについて</b></font></td></tr></tbody></table></td><td valign="top" align="left" width="360"><table border="0" cellpadding="3" cellspacing="1" width="360"><tbody><tr><td bgcolor="#f0f0f0" colspan="2"><b>●保証について</b></td></tr><tr><td colspan="2"><font color="#000000" size="2">商品到着後6か月間の商品保証を致します。<br>当店側のミスでお手元に届いた商品が違った場合は、商品到着後14日以内での対応となりますので、速やかな商品確認をお願い致します。<br>保証内容はご購入頂いた商品のみとなります。<br>万が一商品に不具合が生じた場合新たに商品のご手配をさせて頂きますが、ご手配できない場合には商品代金のみご返金させて頂きます。<br>商品交換時に発生する費用および損害等は保証できませんのでご了承下さい。<br>取付ミスによる不具合や破損、加工済は保証対象外となります。</font></td></tr><tr><td bgcolor="#f0f0f0" colspan="2"><b>●お取引に関して</b></td></tr><tr><td colspan="2"><font color="#000000" size="2">お振込でお支払の際は、ご注文後5営業日以内にお手続きお願い致します。ご連絡やお手続き頂けない場合には、「お客様都合」によるキャンセルをさせて頂く場合がございます。ご注意ください。<br><br>ご注文の場合には同意されたものとみなさせて頂きますので、ご不明な点がある場合は、必ずご注文前にお問い合わせ下さい。</font></td></tr><tr><td colspan="2" bgcolor="#f0f0f0"><font color="#000000"><b>●その他</b></font></td></tr><tr><td colspan="2"><font size="-1">パッケージにダメージがある場合が御座います。<br>写真撮影の為、パッケージを開封する場合が御座います。</font></td></tr><tr><td bgcolor="#f0f0f0" colspan="2"><font color="#000000"><b>●お問い合わせ先</b></font></td></tr><tr><td width="356" colspan="2"><font color="#000000" size="2">【株式会社エスオーエル】<br>〒221-0031<br>神奈川県横浜市神奈川区新浦島町一丁目1番地25 <br>GRC横浜ベイリサーチパーク　10階<br>TEL：045-450-6218 / FAX：045-330-4015<br>※土曜・日曜はお電話でのお問い合わせは承っておりません。<br>e-mail：<a href="mailto:sol-info1@s-o-l.co.jp">sol-info1@s-o-l.co.jp</a></font><br><font size="-1">営業時間<font color="#000000" size="2">：10：00〜18：00<br>(祝祭日を除く)</font></font></td></tr><tr><td bgcolor="#f0f0f0" colspan="2"><font color="#000000"><b>●出荷倉庫</b></font></td></tr><tr><td width="356" colspan="2"><font size="-1"><font color="#000000" size="2"><font size="-1">【株式会社エスオーエル　パーツセンター】<BR>〒292-0824<BR>千葉県木更津市小浜276-3</font></font></font></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></div>"""
@@ -795,7 +798,7 @@ if uploaded_file is not None:
             
             # 判定用テキストの作成（商品名、カテゴリ、および追加テキスト）
             csv_path = df['path'] if 'path' in df.columns else pd.Series('', index=df.index)
-            car_brand_series = df.get('car_brand', pd.Series([''] * len(df)))
+            car_brand_series = df.get('car_brand', pd.Series("", index=df.index))
             mapped_cat = car_brand_series.map(CATEGORY_MAP).fillna('')
             target_text = (
                 df['name'].fillna('') + ' ' + 
@@ -809,14 +812,22 @@ if uploaded_file is not None:
             for rule in BANNER_RULES:
                 keywords = rule["keywords"]
                 excludes = rule.get("excludes", [])
-                cond = pd.Series(True, index=df.index)
-                for kw in keywords:
-                    cond = cond & target_text.str.contains(kw, case=False, regex=False)
-                for ex in excludes:
-                    cond = cond & ~target_text.str.contains(ex, case=False, regex=False)
                 
-                pc_insert_banner = np.where(cond, rule["pc_banners"], pc_insert_banner)
-                sp_insert_banner = np.where(cond, rule["sp_banners"], sp_insert_banner)
+                # キーワードはOR条件（どれか1つでも含まれていればTrue）
+                kw_cond = pd.Series(False, index=df.index)
+                for kw in keywords:
+                    kw_cond = kw_cond | target_text.str.contains(kw, case=False, regex=False)
+                    
+                # 除外キーワードはOR条件で検知し、後で反転させる
+                ex_cond = pd.Series(False, index=df.index)
+                for ex in excludes:
+                    ex_cond = ex_cond | target_text.str.contains(ex, case=False, regex=False)
+                    
+                # 最終的な条件：キーワードのどれかが含まれ、かつ、除外キーワードがどれも含まれていない
+                final_cond = kw_cond & ~ex_cond
+                
+                pc_insert_banner = np.where(final_cond, rule["pc_banners"], pc_insert_banner)
+                sp_insert_banner = np.where(final_cond, rule["sp_banners"], sp_insert_banner)
                 
             # 各メディア用バナー挿入つきのヘッダーSeriesの準備 (バナーはここでは結合せず、素のヘッダーとする)
             pc_hdr_supplies = pd.Series(rakuten_header_supplies, index=df.index)
@@ -853,7 +864,7 @@ if uploaded_file is not None:
             close_supplies02 = "</font></td></tr></tbody></table></td></tr></tbody></table></div>"
             close_normal = "</font></td></tr></tbody></table></td></tr></tbody></table></div>"
 
-            pc_supplies_desc = pc_hdr_supplies + additional_clean.str.replace(target_header_supplies, "", regex=False).str.replace(target_footer_supplies, "", regex=False) + close_supplies + COMMON_FOOTER
+            pc_supplies_desc = pc_hdr_supplies + additional_clean.str.replace(target_header_supplies, "", regex=False).str.replace(target_footer_supplies, "", regex=False) + close_supplies + COMMON_FOOTER_SUPPLIES
             pc_parts010_desc = pc_hdr_parts010 + additional_clean.str.replace(target_header_parts010, "", regex=False).str.replace(target_footer_parts010, "", regex=False) + close_parts010 + COMMON_FOOTER
             pc_parts03_desc = pc_hdr_parts03 + additional_clean.str.replace(target_header_parts03, "", regex=False).str.replace(target_footer_parts03, "", regex=False) + close_parts03 + COMMON_FOOTER_CLICKPOST
             pc_supplies03_desc = pc_hdr_supplies03 + additional_clean.str.replace(target_header_supplies03, "", regex=False).str.replace(target_footer_supplies03, "", regex=False) + close_supplies03 + COMMON_FOOTER_CLICKPOST
@@ -1112,7 +1123,7 @@ if uploaded_file is not None:
                 ''
             )
             
-            repeated_car_brand = df.get('car_brand', pd.Series([''] * len(df))).loc[repeated_index].values
+            repeated_car_brand = df.get('car_brand', pd.Series("", index=df.index)).loc[repeated_index].values
             df_normal['商品属性（値）14'] = np.where(sku_mask, repeated_car_brand, '')
             
             row3_mask = (np.arange(len(df_normal)) % 4 == 2)
@@ -1177,7 +1188,7 @@ if uploaded_file is not None:
             cat_row3_mask = (np.arange(len(df_cat)) % 3 == 2)
             
             # 1行目「表示先カテゴリ」への車種カテゴリマッピングの適用
-            mapped_categories = df.get('car_brand', pd.Series([''] * len(df))).map(CATEGORY_MAP).fillna('')
+            mapped_categories = df.get('car_brand', pd.Series("", index=df.index)).map(CATEGORY_MAP).fillna('')
             expanded_categories = mapped_categories.loc[repeated_index_cat].values
             df_cat.loc[cat_row1_mask, '表示先カテゴリ'] = expanded_categories[cat_row1_mask]
             
