@@ -429,7 +429,7 @@ target_header_supplies = '''<center><IMG SRC="https://shopping.c.yimg.jp/lib/sol
 rakuten_header = """<div align="left"><img src="https://image.rakuten.co.jp/s-o-l/cabinet/ninteimb.gif" border="0"><br><table border="0" cellpadding="1" cellspacing="1"><tbody><tr><td bgcolor="#999999" height="44" width="745" align="left"><center><b><font size="+1">商品詳細</font></b></center><table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0" width="745"><tbody><tr height="25"><td bgcolor="#ffffff" width="745" align="left"><font size="-1">"""
 
 # 用品専用PCヘッダーの定義
-rakuten_header_supplies = """<div align="left"><table border="0" cellpadding="1" cellspacing="1"><tbody><tr><td bgcolor="#999999" height="44" width="745" align="left"><center><b><font size="+1">商品詳細</font></b></center><table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0" width="745"><tbody><tr height="25"><td bgcolor="#ffffff" width="745" align="left"><font size="-1"><font size="-1">"""
+rakuten_header_supplies = """<div align="left"><table border="0" cellpadding="1" cellspacing="1"><tbody><tr><td bgcolor="#999999" height="44" width="745" align="left"><center><b><font size="+1">商品詳細</font></b></center><table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0" width="745"><tbody><tr height="25"><td bgcolor="#ffffff" width="745" align="left"><font size="-1">"""
 rakuten_header_parts010 = rakuten_header
 rakuten_header_parts03 = rakuten_header
 
@@ -487,14 +487,14 @@ rakuten_sp_header_supplies = """<img src="https://image.rakuten.co.jp/s-o-l/cabi
 target_header_supplies03 = """<center><IMG SRC="https://shopping.c.yimg.jp/lib/solltd/960.jpg"><BR><BR><IMG SRC="https://shopping.c.yimg.jp/lib/solltd/supplies03.gif"><BR><BR></center>"""
 target_footer_supplies03 = """<B>●保証期間</B><br>商品到着後14日以内の保証となります。<br>当店側のミスでお手元に届いた商品が違った場合は、商品到着後14日間以内での対応となりますので、速やかな商品確認をお願い致します。<br>保証内容はご購入頂いた商品のみとなります。<br>万が一商品に不具合が生じた場合新たに商品のご手配をさせて頂きますが、ご手配できない場合には商品代金のみご返金させて頂きます。<br>商品交換時に発生する費用および損害等は保証できませんのでご了承下さい。<br><br><B>●備考</B><br>入荷時期により予告なく商品の細かな仕様の変更がある場合がございます。<br>本製品は輸入品の為、ご利用には支障のない程度の微細な小キズ、微妙な撓りや汚れ、型から抜いた際のバリ等が付いている場合がございます。<br>ご理解の上、ご購入お願いします。 <br><br><b>●発送方法について<BR> </B>クリックポストでの発送になります。<BR><BR>・日時指定や代引きは出来ません。<BR> ・手渡しではなく、ポストへの投函になります。<BR> ・配送日数はおおむね3日前後になります。<BR> ・追跡可能ですが、紛失や破損等による保証はありませんのでご了承の上ご購入お願いします。<BR> ・発送は発送連絡を行わせて頂いた当日の夕方、ポストへ投函させて頂きます。<BR> ・当方の地域柄、集荷時間等の関係上、追跡番号がインターネット上に反映されるに1〜2日程度かかる場合がございます。予めご了承ください。<BR>例：発送連絡日(20XX/4/1)→ネット上の集荷日(20XX/4/3)<BR>詳しくは<A HREF="http://www.post.japanpost.jp/service/clickpost/" TARGET="new">クリックポストとは</A>をご確認下さい。<BR><BR>"""
 
-rakuten_header_supplies03 = """<div align="left"><table border="0" cellpadding="1" cellspacing="1"><tbody><tr><td bgcolor="#999999" height="44" width="745" align="left"><center><b><font size="+1">商品詳細</font></b></center><table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0" width="745"><tbody><tr height="25"><td height="10" width="86"><font size="-1"><font size="-1">"""
+rakuten_header_supplies03 = """<div align="left"><table border="0" cellpadding="1" cellspacing="1"><tbody><tr><td bgcolor="#999999" height="44" width="745" align="left"><center><b><font size="+1">商品詳細</font></b></center><table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0" width="745"><tbody><tr height="25"><td bgcolor="#ffffff" width="745" align="left"><font size="-1">"""
 
 rakuten_sp_header_supplies03 = """<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013yahoo/960_kyugyo.jpg" width="100%"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/cart2.gif" width="100%" border="0"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/post.gif" width="100%" border="0"><br><br>"""
 
 target_header_supplies02 = """<center><IMG SRC="https://shopping.c.yimg.jp/lib/solltd/960.jpg"><BR><BR><IMG SRC="https://shopping.c.yimg.jp/lib/solltd/supplies02.gif"><BR><BR></center>"""
 target_footer_supplies02 = """<B>●保証期間</B><BR>商品到着後14日以内の保証となります。<BR>当店側のミスでお手元に届いた商品が違った場合は、商品到着後14日以内での対応となりますので、速やかな商品確認をお願い致します。<br>保証内容はご購入頂いた商品のみとなります。<BR>万が一商品に不具合が生じた場合新たに商品のご手配をさせて頂きますが、ご手配できない場合には商品代金のみご返金させて頂きます。<BR>商品交換時に発生する費用および損害等は保証できませんのでご了承下さい。<BR>保証申請時には商品の不良申請書または診断結果および診断書【コピーでも可】・お車の車検証をご提出いただく必要がございます。<BR>また症状や状態によっては商品の状態の確認がとれるお写真をいただく場合もございます。<BR>取付ミスによる不具合や破損、加工済は保証対象外となります。<br><br><B>●備考</B><br>弊社は専門店ではございませんので、取り付け方法・車検等のご質問にはお答えできかねます。<br>本製品は輸入品の為、メーカー出荷時から塗装を施す前提で製造されております。<br>ご利用には支障のない程度の微細な小キズ、微妙な撓りや汚れ、型から抜いた際のバリ等が付いている場合がございますので、取付け時の板金塗装作業等で修正が必要となります。<br>ご理解の上、ご注文お願いします。 <br><br><B>●発送方法について</b><br>西濃運輸または福山通運での発送になります。<BR>※運送便のご指定は一切できません。<BR> ※個人宅様宛の配送はできません。<br>※企業様宛ての時間指定はできませんのでご了承ください。<BR> <BR>営業所留めを希望される場合、ご注文時にご希望の営業所名・営業所住所をご要望欄へご指定下さい。 <BR>※発送予定の運送会社を確認されたい方は、ご注文前に必ずお問い合わせください。<br><br><b>●発送のタイミングについて</b><br>当日発送16時まで可能です。<br>ご注文のタイミングによっては、当日発送が出来ない場合がございますのでご了承下さい。<br><br>"""
 
-rakuten_header_supplies02 = """<div align="left"><table border="0" cellpadding="1" cellspacing="1"><tbody><tr><td bgcolor="#999999" height="44" width="745" align="left"><center><b><font size="+1">商品詳細</font></b></center><table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0" width="745"><tbody><tr height="25"><td height="10" width="86"><font size="-1">"""
+rakuten_header_supplies02 = """<div align="left"><table border="0" cellpadding="1" cellspacing="1"><tbody><tr><td bgcolor="#999999" height="44" width="745" align="left"><center><b><font size="+1">商品詳細</font></b></center><table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0" width="745"><tbody><tr height="25"><td bgcolor="#ffffff" width="745" align="left"><font size="-1">"""
 
 rakuten_sp_header_supplies02 = """<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013yahoo/960_kyugyo.jpg" width="100%"><br><br>"""
 NORMAL_ITEM_HEADERS = [
@@ -872,10 +872,10 @@ if uploaded_file is not None:
             df['name'] = np.where(is_parts03, df['name'].str.replace('送料185円 ', '', regex=False), df['name'])
             
             # 【PC用商品説明文の生成】
-            close_supplies = "</font></font></td></tr></tbody></table></td></tr></tbody></table></div>"
+            close_supplies = "</font></td></tr></tbody></table></td></tr></tbody></table></div>"
             close_parts010 = "</font></td></tr></tbody></table></td></tr></tbody></table></div>"
             close_parts03 = "</font></td></tr></tbody></table></td></tr></tbody></table></div>"
-            close_supplies03 = "</font></font></td></tr></tbody></table></td></tr></tbody></table></div>"
+            close_supplies03 = "</font></td></tr></tbody></table></td></tr></tbody></table></div>"
             close_supplies02 = "</font></td></tr></tbody></table></td></tr></tbody></table></div>"
             close_normal = "</font></td></tr></tbody></table></td></tr></tbody></table></div>"
 
@@ -906,8 +906,8 @@ if uploaded_file is not None:
                 default=sp_normal_desc
             )
                                     # バナーの結合（最終組み立て段階：HTMLの先頭に安全に結合）
-            df['PC用商品説明文'] = np.where(pc_insert_banner != "", pc_insert_banner + "\n\n" + df['PC用商品説明文'], df['PC用商品説明文'])
-            df['スマートフォン用商品説明文'] = np.where(sp_insert_banner != "", sp_insert_banner + "\n\n" + df['スマートフォン用商品説明文'], df['スマートフォン用商品説明文'])
+            df['PC用商品説明文'] = np.where(pc_insert_banner != "", pc_insert_banner + df['PC用商品説明文'], df['PC用商品説明文'])
+            df['スマートフォン用商品説明文'] = np.where(sp_insert_banner != "", sp_insert_banner + df['スマートフォン用商品説明文'], df['スマートフォン用商品説明文'])
             
             # 改行削除処理を以下に変更
             df['スマートフォン用商品説明文'] = df['スマートフォン用商品説明文'].replace(r'\r\n|\r|\n', ' ', regex=True)
