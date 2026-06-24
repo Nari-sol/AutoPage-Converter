@@ -1115,7 +1115,6 @@ if uploaded_file is not None:
             df_normal['商品属性（項目）4'] = np.where(sku_mask, 'カラー', '')
             df_normal['商品属性（項目）5'] = np.where(sku_mask, 'シリーズ名', '')
             df_normal['商品属性（項目）6'] = np.where(sku_mask, 'ブランド名（カナ）', '')
-            df_normal['商品属性（項目）7'] = np.where(sku_mask, '個数', '')
             df_normal['商品属性（項目）8'] = np.where(sku_mask, '発売年月日', '')
             df_normal['商品属性（項目）9'] = np.where(sku_mask, '状態', '')
             df_normal['商品属性（項目）10'] = np.where(sku_mask, '中古状態', '')
@@ -1226,6 +1225,17 @@ if uploaded_file is not None:
 
             # キャッチコピーの174byte制限とスマートカット処理
             df_normal['キャッチコピー'] = df_normal['キャッチコピー'].apply(truncate_catchcopy)
+
+            # 商品属性の自動クリーンアップ処理
+            for i in range(1, 61):
+                item_col = f'商品属性（項目）{i}'
+                val_col = f'商品属性（値）{i}'
+                unit_col = f'商品属性（単位）{i}'
+                if item_col in df_normal.columns and val_col in df_normal.columns:
+                    empty_mask = (df_normal[val_col] == '') | (df_normal[val_col].isna())
+                    df_normal.loc[empty_mask, item_col] = ''
+                    if unit_col in df_normal.columns:
+                        df_normal.loc[empty_mask, unit_col] = ''
 
             # ダウンロードボタンの配置
             st.write("---")
