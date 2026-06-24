@@ -429,7 +429,7 @@ target_header_supplies = '''<center><IMG SRC="https://shopping.c.yimg.jp/lib/sol
 rakuten_header = """<div align="left"><img src="https://image.rakuten.co.jp/s-o-l/cabinet/ninteimb.gif" border="0"><br><table border="0" cellpadding="1" cellspacing="1"><tbody><tr><td bgcolor="#999999" height="44" width="745" align="left"><center><b><font size="+1">商品詳細</font></b></center><table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0" width="745"><tbody><tr height="25"><td bgcolor="#ffffff" width="745" align="left"><font size="-1">"""
 
 # 用品専用PCヘッダーの定義
-rakuten_header_supplies = """<div align="left"><img src="https://image.rakuten.co.jp/s-o-l/cabinet/ninteimb.gif" border="0"><br><table border="0" cellpadding="1" cellspacing="1"><tbody><tr><td bgcolor="#999999" height="44" width="745" align="left"><center><b><font size="+1">商品詳細</font></b></center><table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0" width="745"><tbody><tr height="25"><td bgcolor="#ffffff" width="745" align="left"><font size="-1"><font size="-1">"""
+rakuten_header_supplies = """<div align="left"><table border="0" cellpadding="1" cellspacing="1"><tbody><tr><td bgcolor="#999999" height="44" width="745" align="left"><center><b><font size="+1">商品詳細</font></b></center><table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0" width="745"><tbody><tr height="25"><td bgcolor="#ffffff" width="745" align="left"><font size="-1"><font size="-1">"""
 rakuten_header_parts010 = rakuten_header
 rakuten_header_parts03 = rakuten_header
 
@@ -766,6 +766,12 @@ def determine_suffix(ship_weight):
         
     return ""
 
+def format_banner_width(banner_html, width_val):
+    if "width=" in banner_html:
+        return re.sub(r'width="[^"]{1,20}"', f'width="{width_val}"', banner_html)
+    else:
+        return re.sub(r'(?i)<img', f'<img width="{width_val}"', banner_html)
+
 # CSVファイルのアップローダーを配置
 uploaded_file = st.file_uploader(
     "Yahoo!ショッピングからダウンロードしたCSVファイルを選択してください", 
@@ -826,8 +832,12 @@ if uploaded_file is not None:
                 # 最終的な条件：キーワードのどれかが含まれ、かつ、除外キーワードがどれも含まれていない
                 final_cond = kw_cond & ~ex_cond
                 
-                pc_insert_banner = np.where(final_cond, rule["pc_banners"], pc_insert_banner)
-                sp_insert_banner = np.where(final_cond, rule["sp_banners"], sp_insert_banner)
+                # バナー挿入時に属性を付与
+                pc_b = format_banner_width(rule["pc_banners"], "745")
+                sp_b = format_banner_width(rule["sp_banners"], "100%")
+                
+                pc_insert_banner = np.where(final_cond, pc_b, pc_insert_banner)
+                sp_insert_banner = np.where(final_cond, sp_b, sp_insert_banner)
                 
             # 各メディア用バナー挿入つきのヘッダーSeriesの準備 (バナーはここでは結合せず、素のヘッダーとする)
             pc_hdr_supplies = pd.Series(rakuten_header_supplies, index=df.index)
@@ -846,6 +856,11 @@ if uploaded_file is not None:
             
             df['fitment_info'] = additional_clean.apply(extract_fitment_info)
             
+            # 用品用の更地化処理 (ベンツ認定ロゴおよびISO9001ロゴの完全除去)
+            # アスタリスクは一切使用しないため、範囲指定 {0,999} などを使用します。
+            logo_pattern = r'(?i)(?:<br\s{0,9}/?>\s{0,9}){0,9}<img\s{1,9}[^>]{0,999}(?:ninteimb|notesiso)\.(?:gif|jpg|png|jpeg)[^>]{0,999}>(?:\s{0,9}(?:<br\s{0,9}/?>|/?>)){0,9}'
+            additional_clean_supplies = additional_clean.str.replace(logo_pattern, '', regex=True)
+
             # 各種条件の判定
             is_supplies = additional_clean.str.contains('supplies01.gif', regex=False)
             is_parts010 = additional_clean.str.contains('parts010.gif', regex=False)
@@ -864,11 +879,11 @@ if uploaded_file is not None:
             close_supplies02 = "</font></td></tr></tbody></table></td></tr></tbody></table></div>"
             close_normal = "</font></td></tr></tbody></table></td></tr></tbody></table></div>"
 
-            pc_supplies_desc = pc_hdr_supplies + additional_clean.str.replace(target_header_supplies, "", regex=False).str.replace(target_footer_supplies, "", regex=False) + close_supplies + COMMON_FOOTER_SUPPLIES
+            pc_supplies_desc = pc_hdr_supplies + additional_clean_supplies.str.replace(target_header_supplies, "", regex=False).str.replace(target_footer_supplies, "", regex=False) + close_supplies + COMMON_FOOTER_SUPPLIES
             pc_parts010_desc = pc_hdr_parts010 + additional_clean.str.replace(target_header_parts010, "", regex=False).str.replace(target_footer_parts010, "", regex=False) + close_parts010 + COMMON_FOOTER
             pc_parts03_desc = pc_hdr_parts03 + additional_clean.str.replace(target_header_parts03, "", regex=False).str.replace(target_footer_parts03, "", regex=False) + close_parts03 + COMMON_FOOTER_CLICKPOST
-            pc_supplies03_desc = pc_hdr_supplies03 + additional_clean.str.replace(target_header_supplies03, "", regex=False).str.replace(target_footer_supplies03, "", regex=False) + close_supplies03 + COMMON_FOOTER_CLICKPOST
-            pc_supplies02_desc = pc_hdr_supplies02 + additional_clean.str.replace(target_header_supplies02, "", regex=False).str.replace(target_footer_supplies02, "", regex=False) + close_supplies02 + COMMON_FOOTER
+            pc_supplies03_desc = pc_hdr_supplies03 + additional_clean_supplies.str.replace(target_header_supplies03, "", regex=False).str.replace(target_footer_supplies03, "", regex=False) + close_supplies03 + COMMON_FOOTER_CLICKPOST
+            pc_supplies02_desc = pc_hdr_supplies02 + additional_clean_supplies.str.replace(target_header_supplies02, "", regex=False).str.replace(target_footer_supplies02, "", regex=False) + close_supplies02 + COMMON_FOOTER
             pc_normal_desc = pc_hdr_normal + additional_clean.str.replace(target_header, "", regex=False).str.replace(target_footer, "", regex=False) + close_normal + COMMON_FOOTER
             
             df['PC用商品説明文'] = np.select(
@@ -878,11 +893,11 @@ if uploaded_file is not None:
             )
             
             # 【スマートフォン用商品説明文の生成】
-            sp_supplies_desc = sp_hdr_supplies + additional_clean.str.replace(target_header_supplies, "", regex=False).str.replace(target_footer_supplies, "", regex=False) + COMMON_SP_FOOTER_SUPPLIES
+            sp_supplies_desc = sp_hdr_supplies + additional_clean_supplies.str.replace(target_header_supplies, "", regex=False).str.replace(target_footer_supplies, "", regex=False) + COMMON_SP_FOOTER_SUPPLIES
             sp_parts010_desc = sp_hdr_parts010 + additional_clean.str.replace(target_header_parts010, "", regex=False).str.replace(target_footer_parts010, "", regex=False) + COMMON_SP_FOOTER
             sp_parts03_desc = sp_hdr_parts03 + additional_clean.str.replace(target_header_parts03, "", regex=False).str.replace(target_footer_parts03, "", regex=False) + COMMON_SP_FOOTER_CLICKPOST
-            sp_supplies03_desc = sp_hdr_supplies03 + additional_clean.str.replace(target_header_supplies03, "", regex=False).str.replace(target_footer_supplies03, "", regex=False) + COMMON_SP_FOOTER_CLICKPOST_SUPPLIES
-            sp_supplies02_desc = sp_hdr_supplies02 + additional_clean.str.replace(target_header_supplies02, "", regex=False).str.replace(target_footer_supplies02, "", regex=False) + COMMON_SP_FOOTER_SUPPLIES02
+            sp_supplies03_desc = sp_hdr_supplies03 + additional_clean_supplies.str.replace(target_header_supplies03, "", regex=False).str.replace(target_footer_supplies03, "", regex=False) + COMMON_SP_FOOTER_CLICKPOST_SUPPLIES
+            sp_supplies02_desc = sp_hdr_supplies02 + additional_clean_supplies.str.replace(target_header_supplies02, "", regex=False).str.replace(target_footer_supplies02, "", regex=False) + COMMON_SP_FOOTER_SUPPLIES02
             sp_normal_desc = sp_hdr_normal + additional_clean.str.replace(target_header, "", regex=False).str.replace(target_footer, "", regex=False) + COMMON_SP_FOOTER
             
             df['スマートフォン用商品説明文'] = np.select(
@@ -890,13 +905,14 @@ if uploaded_file is not None:
                 [sp_supplies_desc, sp_parts010_desc, sp_parts03_desc, sp_supplies03_desc, sp_supplies02_desc],
                 default=sp_normal_desc
             )
-            
                                     # バナーの結合（最終組み立て段階：HTMLの先頭に安全に結合）
             df['PC用商品説明文'] = np.where(pc_insert_banner != "", pc_insert_banner + "\n\n" + df['PC用商品説明文'], df['PC用商品説明文'])
             df['スマートフォン用商品説明文'] = np.where(sp_insert_banner != "", sp_insert_banner + "\n\n" + df['スマートフォン用商品説明文'], df['スマートフォン用商品説明文'])
             
-            # スマートフォン用商品説明文の改行を完全に削除
-            df['スマートフォン用商品説明文'] = df['スマートフォン用商品説明文'].str.replace('\n', '', regex=False).str.replace('\r', '', regex=False)
+            # 改行削除処理を以下に変更
+            df['スマートフォン用商品説明文'] = df['スマートフォン用商品説明文'].replace(r'\r\n|\r|\n', ' ', regex=True)
+            # タグ同士の間にできた過剰なスペースを整理（必要に応じて）
+            df['スマートフォン用商品説明文'] = df['スマートフォン用商品説明文'].str.replace(r'>\s+<', '><', regex=True)
 
             df['suffix'] = df['ship-weight'].apply(determine_suffix)
             
