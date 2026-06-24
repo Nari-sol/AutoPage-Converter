@@ -1076,6 +1076,7 @@ if uploaded_file is not None:
             df_normal['商品属性（値）2'] = np.where(sku_mask, df_normal['商品管理番号（商品URL）'].str.split('-').str[0], '')
             
             df_normal['商品属性（値）3'] = np.where(sku_mask, attr3_input, '')
+            df_normal['商品属性（値）5'] = np.where(sku_mask, '-', '')
             
             df_normal['商品属性（値）6'] = np.where(
                 sku_mask,
