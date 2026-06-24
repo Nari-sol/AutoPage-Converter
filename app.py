@@ -525,7 +525,7 @@ NORMAL_ITEM_HEADERS = [
     "商品属性（項目）24", "商品属性（値）24", "商品属性（単位）24",
     "商品属性（項目）25", "商品属性（値）25", "商品属性（単位）25",
     "商品属性（項目）26", "商品属性（値）26", "商品属性（単位）26",
-    "商品属性（項目）27", "商品属性（値）27", "商品属性 \n（値）27" if False else "商品属性（値）27", "商品属性（単位）27",
+    "商品属性（項目）27", "商品属性（値）27", "商品属性（単位）27",
     "商品属性（項目）28", "商品属性（値）28", "商品属性（単位）28",
     "商品属性（項目）29", "商品属性（値）29", "商品属性（単位）29",
     "商品属性（項目）30", "商品属性（値）30", "商品属性（単位）30",
@@ -656,6 +656,18 @@ def determine_medama_item(brand_code):
         return f"目玉 {BRAND_CODE_MAP[code_str]}"
     else:
         return "目玉 共通"
+
+def truncate_catchcopy(text, max_bytes=174):
+    if pd.isna(text):
+        return text
+    text = str(text)
+    while len(text.encode('cp932', errors='replace')) > max_bytes:
+        if ' ' not in text:
+            while len(text.encode('cp932', errors='replace')) > max_bytes:
+                text = text[:-1]
+            break
+        text = text.rsplit(' ', 1)[0]
+    return text
 
 def determine_car_brand(brand_code):
     if pd.isna(brand_code) or str(brand_code).strip() == "" or str(brand_code).lower() == "nan":
@@ -1149,13 +1161,26 @@ if uploaded_file is not None:
             # 表示先カテゴリが空欄（空文字列または欠損値）の行を除外
             df_cat['表示先カテゴリ'] = df_cat['表示先カテゴリ'].fillna('')
             df_cat = df_cat[df_cat['表示先カテゴリ'].str.strip() != '']
-            
+
+            # 楽天アップロード用CSVのエラー解消クレンジング処理
+            # 商品管理番号（商品URL）の小文字化
+            df_normal['商品管理番号（商品URL）'] = df_normal['商品管理番号（商品URL）'].str.lower()
+            df_cat['商品管理番号（商品URL）'] = df_cat['商品管理番号（商品URL）'].str.lower()
+
+            # 目玉商品の全角・半角スペース調整
+            df_normal['キャッチコピー'] = df_normal['キャッチコピー'].fillna('')
+            df_normal['キャッチコピー'] = df_normal['キャッチコピー'].str.replace('目玉 ', '目玉　', regex=False)
+            df_normal['キャッチコピー'] = df_normal['キャッチコピー'].str.replace('目玉　プール', '目玉 プール', regex=False)
+
+            # キャッチコピーの174byte制限とスマートカット処理
+            df_normal['キャッチコピー'] = df_normal['キャッチコピー'].apply(truncate_catchcopy)
+
             # ダウンロードボタンの配置
             st.write("---")
             st.subheader("📥 楽天用CSVダウンロード")
             col1, col2 = st.columns(2)
             with col1:
-                normal_csv = df_normal.to_csv(index=False, encoding='utf-8-sig').encode('utf-8-sig')
+                normal_csv = df_normal.to_csv(index=False, encoding='cp932', errors='replace').encode('cp932', errors='replace')
                 st.download_button(
                     label="normal-item.csvをダウンロード",
                     data=normal_csv,
@@ -1163,7 +1188,7 @@ if uploaded_file is not None:
                     mime="text/csv"
                 )
             with col2:
-                cat_csv = df_cat.to_csv(index=False, encoding='utf-8-sig').encode('utf-8-sig')
+                cat_csv = df_cat.to_csv(index=False, encoding='cp932', errors='replace').encode('cp932', errors='replace')
                 st.download_button(
                     label="item-cat.csvをダウンロード",
                     data=cat_csv,
