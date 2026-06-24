@@ -1168,9 +1168,12 @@ if uploaded_file is not None:
             df_cat['商品管理番号（商品URL）'] = df_cat['商品管理番号（商品URL）'].str.lower()
 
             # 目玉商品の全角・半角スペース調整
-            df_normal['キャッチコピー'] = df_normal['キャッチコピー'].fillna('')
-            df_normal['キャッチコピー'] = df_normal['キャッチコピー'].str.replace('目玉 ', '目玉　', regex=False)
-            df_normal['キャッチコピー'] = df_normal['キャッチコピー'].str.replace('目玉　プール', '目玉 プール', regex=False)
+            cols = ['PC用キャッチコピー', 'スマートフォン用キャッチコピー', 'キャッチコピー']
+            for col in cols:
+                if col in df_normal.columns:
+                    df_normal[col] = df_normal[col].fillna('')
+                    df_normal[col] = df_normal[col].str.replace(r'目玉 +', '目玉　', regex=True)
+                    df_normal[col] = df_normal[col].str.replace('目玉　プール', '目玉 プール', regex=False)
 
             # キャッチコピーの174byte制限とスマートカット処理
             df_normal['キャッチコピー'] = df_normal['キャッチコピー'].apply(truncate_catchcopy)
