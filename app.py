@@ -295,112 +295,136 @@ CATEGORY_MAP = {
 BANNER_RULES = [
     {
         "name": "PREMIUM HAPAD",
-        "keywords": ["PREMIUM HAPAD","パッド"],
+        "must_keywords": ["PREMIUM HAPAD", "パッド"],
+        "or_keywords": [],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336018428.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336018428.jpg" width="100%">'
     },
     {
         "name": "CAPSOL ラジエーター",
-        "keywords": ["CAPSOL", "ラジエーター"],
+        "must_keywords": ["CAPSOL", "ラジエーター"],
+        "or_keywords": [],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0331357316.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0331357316.jpg" width="100%">'
     },
     {
         "name": "CAPSOL オルタネーター",
-        "keywords": ["CAPSOL", "オルタ"],
+        "must_keywords": ["CAPSOL", "オルタ"],
+        "or_keywords": [],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0331395353.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0331395353.jpg" width="100%">'
     },
     {
         "name": "HAPAD ローター",
-        "keywords": ["CAPHAPADSOL", "ローター"],
+        "must_keywords": ["CAPHAPADSOL", "ローター"],
+        "or_keywords": [],
         "excludes": ["PREMIUM"],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0330601774.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0330601774.jpg" width="100%">'
     },
     {
         "name": "HAPAD パッド",
-        "keywords": ["HAPAD", "パッド"],
+        "must_keywords": ["HAPAD", "パッド"],
+        "or_keywords": [],
         "excludes": ["PREMIUM"],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0330575433.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0330575433.jpg" width="100%">'
     },
     {
         "name": "CAPSOL コンデンサー",
-        "keywords": ["CAPSOL", "コンデンサー"],
+        "must_keywords": ["CAPSOL", "コンデンサー"],
+        "or_keywords": [],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0332589124.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0332589124.jpg" width="100%">'
     },
     {
         "name": "CAPSOL ラジコン",
-        "keywords": ["CAPSOL", "コンデンサー", "ラジエーター"],
+        "must_keywords": ["CAPSOL"],
+        "or_keywords": ["コンデンサー", "ラジエーター"],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0331466899.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0331466899.jpg" width="100%">'
     },
     {
         "name": "CAPSOL スノーワイパー",
-        "keywords": ["CAPSOL", "スノーワイパー"],
+        "must_keywords": ["CAPSOL", "スノーワイパー"],
+        "or_keywords": [],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0334050737.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0334050737.jpg" width="100%">'
     },
     {
         "name": "ALIC スターター",
-        "keywords": ["ALIC", "スターター"],
+        "must_keywords": ["ALIC", "スターター"],
+        "or_keywords": [],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0335159669.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0335159669.jpg" width="100%">'
     },
     {
         "name": "CAPSOL ACコンプレッサー",
-        "keywords": ["CAPSOL", "ACコンプレッサー","エアコンコンプレッサー"],
+        "must_keywords": ["CAPSOL"],
+        "or_keywords": ["ACコンプレッサー", "エアコンコンプレッサー"],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0335898554.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0335898554.jpg" width="100%">'
     },
     {
         "name": "CAPSOL O2センサー",
-        "keywords": ["CAPSOL", "O2センサー"],
+        "must_keywords": ["CAPSOL", "O2センサー"],
+        "or_keywords": [],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336919795.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336919795.jpg" width="100%">'
     },
     {
         "name": "CAPSOL スターター",
-        "keywords": ["CAPSOL", "スターター"],
+        "must_keywords": ["CAPSOL", "スターター"],
+        "or_keywords": [],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0338860944.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0338860944.jpg" width="100%">'
     },
     {
         "name": "CAPSOL NOXセンサー",
-        "keywords": ["CAPSOL", "NOXセンサー"],
+        "must_keywords": ["CAPSOL", "NOXセンサー"],
+        "or_keywords": [],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0340011887.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0340011887.jpg" width="100%">'
     },
     {
         "name": "CAPSOL 強化イグニッションコイル",
-        "keywords": ["CAPSOL", "コイル", "イグニッションコイル"],
+        "must_keywords": ["CAPSOL"],
+        "or_keywords": ["コイル", "イグニッションコイル"],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0340011887.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0340011887.jpg" width="100%">'
     },
     {
         "name": "水鉄砲",
-        "keywords": ["水風船", "水鉄砲"],
+        "must_keywords": [],
+        "or_keywords": ["水風船", "水鉄砲"],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/11276663/12112622/watergun-01.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/11276663/12112622/watergun-01.jpg" width="100%">'
     },
+        {
+        "name": "CAPSOL O2センサー",
+        "must_keywords": ["CAPSOL", "O2センサー"],
+        "or_keywords": [],
+        "excludes": [],
+        "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336919795.jpg" border="0">',
+        "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336919795.jpg" width="100%">'
+    },
     {
         "name": "CAPSOL ファンモーター",
-        "keywords": ["CAPSOL", "ファンモーター"],
+        "must_keywords": ["CAPSOL", "ファンモーター"],
+        "or_keywords": [],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0332449028.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0332449028.jpg" width="100%">'
@@ -816,21 +840,26 @@ if uploaded_file is not None:
             )
             
             for rule in BANNER_RULES:
-                keywords = rule["keywords"]
+                must_keywords = rule.get("must_keywords", [])
+                or_keywords = rule.get("or_keywords", [])
                 excludes = rule.get("excludes", [])
                 
-                # キーワードはOR条件（どれか1つでも含まれていればTrue）
-                kw_cond = pd.Series(False, index=df.index)
-                for kw in keywords:
-                    kw_cond = kw_cond | target_text.str.contains(kw, case=False, regex=False)
+                must_cond = pd.Series(True, index=df.index)
+                for kw in must_keywords:
+                    must_cond = must_cond & target_text.str.contains(kw, case=False, regex=False)
                     
-                # 除外キーワードはOR条件で検知し、後で反転させる
+                if or_keywords:
+                    or_cond = pd.Series(False, index=df.index)
+                    for kw in or_keywords:
+                        or_cond = or_cond | target_text.str.contains(kw, case=False, regex=False)
+                else:
+                    or_cond = pd.Series(True, index=df.index)
+                    
                 ex_cond = pd.Series(False, index=df.index)
                 for ex in excludes:
                     ex_cond = ex_cond | target_text.str.contains(ex, case=False, regex=False)
                     
-                # 最終的な条件：キーワードのどれかが含まれ、かつ、除外キーワードがどれも含まれていない
-                final_cond = kw_cond & ~ex_cond
+                final_cond = must_cond & or_cond & ~ex_cond
                 
                 # バナー挿入時に属性を付与
                 pc_b = format_banner_width(rule["pc_banners"], "745")
