@@ -295,48 +295,48 @@ CATEGORY_MAP = {
 BANNER_RULES = [
     {
         "name": "PREMIUM HAPAD",
-        "must_keywords": ["PREMIUM HAPAD", "パッド"],
-        "or_keywords": [],
+        "must_keywords": ["PREMIUM HAPAD"],
+        "or_keywords": ["パッド"],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336018428.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336018428.jpg" width="100%">'
     },
     {
         "name": "CAPSOL ラジエーター",
-        "must_keywords": ["CAPSOL", "ラジエーター"],
-        "or_keywords": [],
+        "must_keywords": ["CAPSOL"],
+        "or_keywords": ["ラジエーター"],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0331357316.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0331357316.jpg" width="100%">'
     },
     {
         "name": "CAPSOL オルタネーター",
-        "must_keywords": ["CAPSOL", "オルタ"],
-        "or_keywords": [],
+        "must_keywords": ["CAPSOL"],
+        "or_keywords": ["オルタ"],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0331395353.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0331395353.jpg" width="100%">'
     },
     {
         "name": "HAPAD ローター",
-        "must_keywords": ["CAPHAPADSOL", "ローター"],
-        "or_keywords": [],
+        "must_keywords": ["HAPAD"],
+        "or_keywords": ["ローター"],
         "excludes": ["PREMIUM"],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0330601774.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0330601774.jpg" width="100%">'
     },
     {
         "name": "HAPAD パッド",
-        "must_keywords": ["HAPAD", "パッド"],
-        "or_keywords": [],
+        "must_keywords": ["HAPAD"],
+        "or_keywords": ["パッド"],
         "excludes": ["PREMIUM"],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0330575433.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0330575433.jpg" width="100%">'
     },
     {
         "name": "CAPSOL コンデンサー",
-        "must_keywords": ["CAPSOL", "コンデンサー"],
-        "or_keywords": [],
+        "must_keywords": ["CAPSOL"],
+        "or_keywords": ["コンデンサー"],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0332589124.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0332589124.jpg" width="100%">'
@@ -351,16 +351,16 @@ BANNER_RULES = [
     },
     {
         "name": "CAPSOL スノーワイパー",
-        "must_keywords": ["CAPSOL", "スノーワイパー"],
-        "or_keywords": [],
+        "must_keywords": ["CAPSOL"],
+        "or_keywords": ["スノーワイパー"],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0334050737.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0334050737.jpg" width="100%">'
     },
     {
         "name": "ALIC スターター",
-        "must_keywords": ["ALIC", "スターター"],
-        "or_keywords": [],
+        "must_keywords": ["ALIC"],
+        "or_keywords": ["スターター"],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0335159669.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0335159669.jpg" width="100%">'
@@ -375,24 +375,24 @@ BANNER_RULES = [
     },
     {
         "name": "CAPSOL O2センサー",
-        "must_keywords": ["CAPSOL", "O2センサー"],
-        "or_keywords": [],
+        "must_keywords": ["CAPSOL"],
+        "or_keywords": ["O2センサー"],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336919795.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336919795.jpg" width="100%">'
     },
     {
         "name": "CAPSOL スターター",
-        "must_keywords": ["CAPSOL", "スターター"],
-        "or_keywords": [],
+        "must_keywords": ["CAPSOL"],
+        "or_keywords": ["スターター"],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0338860944.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0338860944.jpg" width="100%">'
     },
     {
         "name": "CAPSOL NOXセンサー",
-        "must_keywords": ["CAPSOL", "NOXセンサー"],
-        "or_keywords": [],
+        "must_keywords": ["CAPSOL"],
+        "or_keywords": ["NOXセンサー"],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0340011887.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0340011887.jpg" width="100%">'
@@ -415,16 +415,16 @@ BANNER_RULES = [
     },
         {
         "name": "CAPSOL O2センサー",
-        "must_keywords": ["CAPSOL", "O2センサー"],
-        "or_keywords": [],
+        "must_keywords": ["CAPSOL"],
+        "or_keywords": ["O2センサー"],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336919795.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336919795.jpg" width="100%">'
     },
     {
         "name": "CAPSOL ファンモーター",
-        "must_keywords": ["CAPSOL", "ファンモーター"],
-        "or_keywords": [],
+        "must_keywords": ["CAPSOL"],
+        "or_keywords": ["ファンモーター"],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0332449028.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0332449028.jpg" width="100%">'
