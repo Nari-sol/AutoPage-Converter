@@ -908,12 +908,12 @@ if uploaded_file is not None:
             close_supplies02 = "</font></td></tr></tbody></table></td></tr></tbody></table></div>"
             close_normal = "</font></td></tr></tbody></table></td></tr></tbody></table></div>"
 
-            pc_supplies_desc = pc_hdr_supplies + additional_clean_supplies.str.replace(target_header_supplies, "", regex=False).str.replace(target_footer_supplies, "", regex=False) + close_supplies + COMMON_FOOTER_SUPPLIES
-            pc_parts010_desc = pc_hdr_parts010 + additional_clean.str.replace(target_header_parts010, "", regex=False).str.replace(target_footer_parts010, "", regex=False) + close_parts010 + COMMON_FOOTER
-            pc_parts03_desc = pc_hdr_parts03 + additional_clean.str.replace(target_header_parts03, "", regex=False).str.replace(target_footer_parts03, "", regex=False) + close_parts03 + COMMON_FOOTER_CLICKPOST
-            pc_supplies03_desc = pc_hdr_supplies03 + additional_clean_supplies.str.replace(target_header_supplies03, "", regex=False).str.replace(target_footer_supplies03, "", regex=False) + close_supplies03 + COMMON_FOOTER_CLICKPOST
-            pc_supplies02_desc = pc_hdr_supplies02 + additional_clean_supplies.str.replace(target_header_supplies02, "", regex=False).str.replace(target_footer_supplies02, "", regex=False) + close_supplies02 + COMMON_FOOTER
-            pc_normal_desc = pc_hdr_normal + additional_clean.str.replace(target_header, "", regex=False).str.replace(target_footer, "", regex=False) + close_normal + COMMON_FOOTER
+            pc_supplies_desc = pc_hdr_supplies + additional_clean_supplies.str.replace(target_header_supplies, "", case=False, regex=False).str.replace(target_footer_supplies, "", case=False, regex=False) + close_supplies + COMMON_FOOTER_SUPPLIES
+            pc_parts010_desc = pc_hdr_parts010 + additional_clean.str.replace(target_header_parts010, "", case=False, regex=False).str.replace(target_footer_parts010, "", case=False, regex=False) + close_parts010 + COMMON_FOOTER
+            pc_parts03_desc = pc_hdr_parts03 + additional_clean.str.replace(target_header_parts03, "", case=False, regex=False).str.replace(target_footer_parts03, "", case=False, regex=False) + close_parts03 + COMMON_FOOTER_CLICKPOST
+            pc_supplies03_desc = pc_hdr_supplies03 + additional_clean_supplies.str.replace(target_header_supplies03, "", case=False, regex=False).str.replace(target_footer_supplies03, "", case=False, regex=False) + close_supplies03 + COMMON_FOOTER_CLICKPOST
+            pc_supplies02_desc = pc_hdr_supplies02 + additional_clean_supplies.str.replace(target_header_supplies02, "", case=False, regex=False).str.replace(target_footer_supplies02, "", case=False, regex=False) + close_supplies02 + COMMON_FOOTER
+            pc_normal_desc = pc_hdr_normal + additional_clean.str.replace(target_header, "", case=False, regex=False).str.replace(target_footer, "", case=False, regex=False) + close_normal + COMMON_FOOTER
             
             df['PC用商品説明文'] = np.select(
                 [is_supplies, is_parts010, is_parts03, is_supplies03, is_supplies02],
@@ -922,12 +922,12 @@ if uploaded_file is not None:
             )
             
             # 【スマートフォン用商品説明文の生成】
-            sp_supplies_desc = sp_hdr_supplies + additional_clean_supplies.str.replace(target_header_supplies, "", regex=False).str.replace(target_footer_supplies, "", regex=False) + COMMON_SP_FOOTER_SUPPLIES
-            sp_parts010_desc = sp_hdr_parts010 + additional_clean.str.replace(target_header_parts010, "", regex=False).str.replace(target_footer_parts010, "", regex=False) + COMMON_SP_FOOTER
-            sp_parts03_desc = sp_hdr_parts03 + additional_clean.str.replace(target_header_parts03, "", regex=False).str.replace(target_footer_parts03, "", regex=False) + COMMON_SP_FOOTER_CLICKPOST
-            sp_supplies03_desc = sp_hdr_supplies03 + additional_clean_supplies.str.replace(target_header_supplies03, "", regex=False).str.replace(target_footer_supplies03, "", regex=False) + COMMON_SP_FOOTER_CLICKPOST_SUPPLIES
-            sp_supplies02_desc = sp_hdr_supplies02 + additional_clean_supplies.str.replace(target_header_supplies02, "", regex=False).str.replace(target_footer_supplies02, "", regex=False) + COMMON_SP_FOOTER_SUPPLIES02
-            sp_normal_desc = sp_hdr_normal + additional_clean.str.replace(target_header, "", regex=False).str.replace(target_footer, "", regex=False) + COMMON_SP_FOOTER
+            sp_supplies_desc = sp_hdr_supplies + additional_clean_supplies.str.replace(target_header_supplies, "", case=False, regex=False).str.replace(target_footer_supplies, "", case=False, regex=False) + COMMON_SP_FOOTER_SUPPLIES
+            sp_parts010_desc = sp_hdr_parts010 + additional_clean.str.replace(target_header_parts010, "", case=False, regex=False).str.replace(target_footer_parts010, "", case=False, regex=False) + COMMON_SP_FOOTER
+            sp_parts03_desc = sp_hdr_parts03 + additional_clean.str.replace(target_header_parts03, "", case=False, regex=False).str.replace(target_footer_parts03, "", case=False, regex=False) + COMMON_SP_FOOTER_CLICKPOST
+            sp_supplies03_desc = sp_hdr_supplies03 + additional_clean_supplies.str.replace(target_header_supplies03, "", case=False, regex=False).str.replace(target_footer_supplies03, "", case=False, regex=False) + COMMON_SP_FOOTER_CLICKPOST_SUPPLIES
+            sp_supplies02_desc = sp_hdr_supplies02 + additional_clean_supplies.str.replace(target_header_supplies02, "", case=False, regex=False).str.replace(target_footer_supplies02, "", case=False, regex=False) + COMMON_SP_FOOTER_SUPPLIES02
+            sp_normal_desc = sp_hdr_normal + additional_clean.str.replace(target_header, "", case=False, regex=False).str.replace(target_footer, "", case=False, regex=False) + COMMON_SP_FOOTER
             
             df['スマートフォン用商品説明文'] = np.select(
                 [is_supplies, is_parts010, is_parts03, is_supplies03, is_supplies02],
