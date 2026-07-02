@@ -753,6 +753,8 @@ def determine_attribute_value_1(name):
         return "HAPAD"
     elif "CAPSOL" in name:
         return "CAPSOL"
+    elif "HELLA" in name:
+        return "HELLA"
     return "エスオーエル"
 
 def determine_attribute_value_6(attr_val_1):
@@ -760,6 +762,8 @@ def determine_attribute_value_6(attr_val_1):
         return "ハパッド"
     elif attr_val_1 == "CAPSOL":
         return "キャプソル"
+    elif attr_val_1 == "HELLA":
+        return "ヘラ"
     return "エスオーエル"
 
 def determine_suffix(ship_weight):
