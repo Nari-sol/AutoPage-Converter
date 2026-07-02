@@ -343,8 +343,8 @@ BANNER_RULES = [
     },
     {
         "name": "CAPSOL ラジコン",
-        "must_keywords": ["CAPSOL"],
-        "or_keywords": ["コンデンサー", "ラジエーター"],
+        "must_keywords": ["CAPSOL", "コンデンサー", "ラジエーター"],
+        "or_keywords": [],
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0331466899.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0331466899.jpg" width="100%">'
