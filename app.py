@@ -766,7 +766,17 @@ def determine_attribute_value_6(attr_val_1):
         return "ヘラ"
     return "エスオーエル"
 
-def determine_suffix(ship_weight):
+def determine_suffix(row):
+    postage = row.get('postage-set')
+    if not pd.isna(postage):
+        try:
+            if float(postage) == 6.0:
+                return "SSS"
+        except (ValueError, TypeError):
+            if str(postage).strip() == "6":
+                return "SSS"
+
+    ship_weight = row.get('ship-weight')
     if pd.isna(ship_weight):
         return ""
     try:
@@ -947,7 +957,7 @@ if uploaded_file is not None:
             # タグ同士の間にできた過剰なスペースを整理（必要に応じて）
             df['スマートフォン用商品説明文'] = df['スマートフォン用商品説明文'].str.replace(r'>\s+<', '><', regex=True)
 
-            df['suffix'] = df['ship-weight'].apply(determine_suffix)
+            df['suffix'] = df.apply(determine_suffix, axis=1)
             
             item_image_urls_clean = df['item-image-urls'].fillna('')
             df['notes_image'] = item_image_urls_clean.apply(extract_notes_image)
