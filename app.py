@@ -1082,26 +1082,26 @@ if uploaded_file is not None:
             repeated_is_supplies02 = is_supplies02.loc[repeated_index].values
             repeated_is_clickpost = is_clickpost_global.loc[repeated_index].values
 
-            # notes2.jpgの判定
+            # notes2.jpgの判定（他条件用）
             is_notes2 = df_normal['商品画像パス12'] == '/2013rakuten/notes2.jpg'
-            is_clickpost_notes2 = repeated_is_clickpost & is_notes2
 
-            # 12番画像をクリックポスト用画像に差し替え（要件1）
-            df_normal['商品画像パス12'] = np.where(is_clickpost_notes2, '/2013rakuten/imgrc0231783254.jpg', df_normal['商品画像パス12'])
+            # クリックポスト専用画像（11番・12番）の無条件セット（要件4）
+            df_normal['商品画像パス11'] = np.where(repeated_is_clickpost, '/2013rakuten/notesp2.jpg', df_normal['商品画像パス11'])
+            df_normal['商品画像タイプ11'] = np.where(repeated_is_clickpost, 'cabinet', df_normal['商品画像タイプ11'])
+            df_normal['商品画像名（ALT）11'] = np.where(repeated_is_clickpost, alt_val, df_normal['商品画像名（ALT）11'])
             
-            # 11番への自動セット処理
-            df_normal['商品画像パス11'] = np.where(is_clickpost_notes2, '/2013rakuten/notesp2.jpg', df_normal['商品画像パス11'])
-            df_normal['商品画像タイプ11'] = np.where(is_clickpost_notes2, 'cabinet', df_normal['商品画像タイプ11'])
-            df_normal['商品画像名（ALT）11'] = np.where(is_clickpost_notes2, alt_val, df_normal['商品画像名（ALT）11'])
+            df_normal['商品画像パス12'] = np.where(repeated_is_clickpost, '/2013rakuten/imgrc0231783254.jpg', df_normal['商品画像パス12'])
+            df_normal['商品画像タイプ12'] = np.where(repeated_is_clickpost, 'cabinet', df_normal['商品画像タイプ12'])
+            df_normal['商品画像名（ALT）12'] = np.where(repeated_is_clickpost, alt_val, df_normal['商品画像名（ALT）12'])
+
+            # parts010専用画像（12番）の無条件セット
+            df_normal['商品画像パス12'] = np.where(repeated_is_parts010, '/2013rakuten/imgrc0264651507.jpg', df_normal['商品画像パス12'])
+            df_normal['商品画像タイプ12'] = np.where(repeated_is_parts010, 'cabinet', df_normal['商品画像タイプ12'])
+            df_normal['商品画像名（ALT）12'] = np.where(repeated_is_parts010, alt_val, df_normal['商品画像名（ALT）12'])
+
             # supplies02かつnotes2.jpgの複合判定（直前で画像パス12が書き換わるため、書き換え前の判定 is_notes2 を使用）
             is_supplies02_notes2 = repeated_is_supplies02 & is_notes2
             df_normal['商品画像パス12'] = np.where(is_supplies02_notes2, '/2013rakuten/notes.jpg', df_normal['商品画像パス12'])
-
-            # supplies03かつnotes2.jpgの複合判定（直前で画像パス12が書き換わるため、書き換え前の判定 is_notes2 を使用）
-            is_supplies03_notes2 = repeated_is_supplies03 & is_notes2
-            
-            # supplies03品向けの12番の差し替えと11番への連動追記処理
-            df_normal['商品画像パス12'] = np.where(is_supplies03_notes2, '/2013rakuten/imgrc0264651507.jpg', df_normal['商品画像パス12'])
             
             df_normal['目玉商品'] = expand_and_mask(df['medama_item'])
             
