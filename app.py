@@ -721,25 +721,32 @@ def calculate_sales_price(row):
     price_val = row.get('price')
     if pd.isna(price_val) or str(price_val).strip() == "" or str(price_val).lower() == "nan":
         return ""
-    
+
     try:
         base_price = float(price_val)
     except (ValueError, TypeError):
         return ""
-        
-    ship_weight = row.get('ship-weight')
+
+    postage = row.get('postage-set')
+    is_cp = False
+    if not pd.isna(postage) and str(postage).strip() in ['6', '6.0']:
+        is_cp = True
+    add1 = str(row.get('additional1', ''))
+    if 'parts03' in add1 or 'supplies03.gif' in add1:
+        is_cp = True
+
     addition = 0
-    if not pd.isna(ship_weight) and str(ship_weight).strip() != "" and str(ship_weight).lower() != "nan":
-        try:
-            f_val = float(ship_weight)
-            if f_val.is_integer():
-                key = int(f_val)
-            else:
-                key = f_val
-        except (ValueError, TypeError):
-            key = str(ship_weight).strip()
-            
-        addition = SHIP_WEIGHT_PRICE_MAP.get(key, 0)
+    if is_cp:
+        addition = 185
+    else:
+        ship_weight = row.get('ship-weight')
+        if not pd.isna(ship_weight) and str(ship_weight).strip() != "" and str(ship_weight).lower() != "nan":
+            try:
+                f_val = float(ship_weight)
+                key = int(f_val) if f_val.is_integer() else f_val
+            except (ValueError, TypeError):
+                key = str(ship_weight).strip()
+            addition = SHIP_WEIGHT_PRICE_MAP.get(key, 0)
         
     final_price = base_price + addition
     if final_price.is_integer():
@@ -915,9 +922,12 @@ if uploaded_file is not None:
             is_parts03 = additional_clean.str.contains('parts03', regex=False)
             is_supplies03 = additional_clean.str.contains('supplies03.gif', regex=False)
             is_supplies02 = additional_clean.str.contains('supplies02.gif', regex=False)
+            is_postage_6 = df['postage-set'].astype(str).str.strip().isin(['6', '6.0'])
+            is_clickpost_global = is_parts03 | is_supplies03 | is_postage_6
             
             # parts03品の商品名から特定の文字列を削除（一括処理）
             df['name'] = np.where(is_parts03, df['name'].str.replace('送料185円 ', '', regex=False), df['name'])
+            df['name'] = np.where(is_clickpost_global, df['name'].str.replace('18時まで即日発送', '18時まで即日発送 ポスト投函', regex=False), df['name'])
             
             # 【PC用商品説明文の生成】
             close_supplies = "</font></td></tr></tbody></table></td></tr></tbody></table></div>"
@@ -1070,7 +1080,7 @@ if uploaded_file is not None:
             repeated_is_parts03 = is_parts03.loc[repeated_index].values
             repeated_is_supplies03 = is_supplies03.loc[repeated_index].values
             repeated_is_supplies02 = is_supplies02.loc[repeated_index].values
-            repeated_is_clickpost = repeated_is_parts03 | repeated_is_supplies03
+            repeated_is_clickpost = is_clickpost_global.loc[repeated_index].values
 
             # notes2.jpgの判定
             is_notes2 = df_normal['商品画像パス12'] == '/2013rakuten/notes2.jpg'
