@@ -978,7 +978,11 @@ if uploaded_file is not None:
                 code = row['code']
                 if pd.isna(code) or str(code).strip() == "" or str(code).lower() == "nan":
                     return ""
-                return str(code).strip() + row['suffix']
+                base_code = str(code).strip()
+                # 枝番がSSSの場合、元のコード末尾のpまたはPを削除する
+                if row.get('suffix') == 'SSS' and base_code.lower().endswith('p'):
+                    base_code = base_code[:-1]
+                return base_code + row['suffix']
 
             def generate_item_id(row):
                 code = row['code']
@@ -1270,6 +1274,11 @@ if uploaded_file is not None:
             # 商品管理番号（商品URL）の小文字化
             df_normal['商品管理番号（商品URL）'] = df_normal['商品管理番号（商品URL）'].str.lower()
             df_cat['商品管理番号（商品URL）'] = df_cat['商品管理番号（商品URL）'].str.lower()
+
+            # クリックポスト（末尾sss）の場合、沖縄・離島着払いオプション（4行目）の行を削除
+            is_sss = df_normal['商品管理番号（商品URL）'].str.endswith('sss')
+            is_island_fee = df_normal['商品オプション項目名'] == '沖縄、他県離島、中継料金発生エリアは送料着払いです'
+            df_normal = df_normal[~(is_sss & is_island_fee)]
 
 
             # キャッチコピーの174byte制限とスマートカット処理
