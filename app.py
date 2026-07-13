@@ -504,6 +504,7 @@ rakuten_sp_header_parts010 = rakuten_sp_header
 rakuten_sp_header_parts03 = rakuten_sp_header
 
 target_header_parts03 = '<center><IMG SRC="https://shopping.c.yimg.jp/lib/solltd/960.jpg"><BR><BR><IMG SRC="https://shopping.c.yimg.jp/lib/solltd/parts03.gif"><BR><BR></center>'
+target_header_parts030 = '<center><IMG SRC="https://shopping.c.yimg.jp/lib/solltd/960.jpg"><BR><BR><IMG SRC="https://shopping.c.yimg.jp/lib/solltd/parts030.gif"><BR><BR></center>'
 target_footer_parts03 = target_footer
 
 rakuten_sp_header_supplies = """<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013yahoo/960_kyugyo.jpg" width="100%"><br><br>"""
@@ -939,7 +940,7 @@ if uploaded_file is not None:
 
             pc_supplies_desc = pc_hdr_supplies + additional_clean_supplies.str.replace(target_header_supplies, "", case=False, regex=False).str.replace(target_footer_supplies, "", case=False, regex=False) + close_supplies + COMMON_FOOTER_SUPPLIES
             pc_parts010_desc = pc_hdr_parts010 + additional_clean.str.replace(target_header_parts010, "", case=False, regex=False).str.replace(target_footer_parts010, "", case=False, regex=False) + close_parts010 + COMMON_FOOTER
-            pc_parts03_desc = pc_hdr_parts03 + additional_clean.str.replace(target_header_parts03, "", case=False, regex=False).str.replace(target_footer_parts03, "", case=False, regex=False) + close_parts03 + COMMON_FOOTER_CLICKPOST
+            pc_parts03_desc = pc_hdr_parts03 + additional_clean.str.replace(target_header_parts03, "", case=False, regex=False).str.replace(target_header_parts030, "", case=False, regex=False).str.replace(target_footer_parts03, "", case=False, regex=False) + close_parts03 + COMMON_FOOTER_CLICKPOST
             pc_supplies03_desc = pc_hdr_supplies03 + additional_clean_supplies.str.replace(target_header_supplies03, "", case=False, regex=False).str.replace(target_footer_supplies03, "", case=False, regex=False) + close_supplies03 + COMMON_FOOTER_CLICKPOST
             pc_supplies02_desc = pc_hdr_supplies02 + additional_clean_supplies.str.replace(target_header_supplies02, "", case=False, regex=False).str.replace(target_footer_supplies02, "", case=False, regex=False) + close_supplies02 + COMMON_FOOTER
             pc_normal_desc = pc_hdr_normal + additional_clean.str.replace(target_header, "", case=False, regex=False).str.replace(target_footer, "", case=False, regex=False) + close_normal + COMMON_FOOTER
@@ -953,7 +954,7 @@ if uploaded_file is not None:
             # 【スマートフォン用商品説明文の生成】
             sp_supplies_desc = sp_hdr_supplies + additional_clean_supplies.str.replace(target_header_supplies, "", case=False, regex=False).str.replace(target_footer_supplies, "", case=False, regex=False) + COMMON_SP_FOOTER_SUPPLIES
             sp_parts010_desc = sp_hdr_parts010 + additional_clean.str.replace(target_header_parts010, "", case=False, regex=False).str.replace(target_footer_parts010, "", case=False, regex=False) + COMMON_SP_FOOTER
-            sp_parts03_desc = sp_hdr_parts03 + additional_clean.str.replace(target_header_parts03, "", case=False, regex=False).str.replace(target_footer_parts03, "", case=False, regex=False) + COMMON_SP_FOOTER_CLICKPOST
+            sp_parts03_desc = sp_hdr_parts03 + additional_clean.str.replace(target_header_parts03, "", case=False, regex=False).str.replace(target_header_parts030, "", case=False, regex=False).str.replace(target_footer_parts03, "", case=False, regex=False) + COMMON_SP_FOOTER_CLICKPOST
             sp_supplies03_desc = sp_hdr_supplies03 + additional_clean_supplies.str.replace(target_header_supplies03, "", case=False, regex=False).str.replace(target_footer_supplies03, "", case=False, regex=False) + COMMON_SP_FOOTER_CLICKPOST_SUPPLIES
             sp_supplies02_desc = sp_hdr_supplies02 + additional_clean_supplies.str.replace(target_header_supplies02, "", case=False, regex=False).str.replace(target_footer_supplies02, "", case=False, regex=False) + COMMON_SP_FOOTER_SUPPLIES02
             sp_normal_desc = sp_hdr_normal + additional_clean.str.replace(target_header, "", case=False, regex=False).str.replace(target_footer, "", case=False, regex=False) + COMMON_SP_FOOTER
@@ -1097,7 +1098,7 @@ if uploaded_file is not None:
 
             # parts010専用画像（12番）の無条件セット
             is_parts010_target = repeated_is_parts010 & mask
-            df_normal['商品画像パス12'] = np.where(is_parts010_target, '/2013rakuten/imgrc0264651507.jpg', df_normal['商品画像パス12'])
+            df_normal['商品画像パス12'] = np.where(is_parts010_target, '/2013rakuten/notes4.jpg', df_normal['商品画像パス12'])
             df_normal['商品画像タイプ12'] = np.where(is_parts010_target, 'cabinet', df_normal['商品画像タイプ12'])
             df_normal['商品画像名（ALT）12'] = np.where(is_parts010_target, alt_val, df_normal['商品画像名（ALT）12'])
 
