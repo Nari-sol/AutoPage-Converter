@@ -298,8 +298,8 @@ BANNER_RULES = [
         "must_keywords": ["PREMIUM HAPAD"],
         "or_keywords": ["パッド"],
         "excludes": [],
-        "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336018428.jpg" border="0">',
-        "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336018428.jpg" width="100%">'
+        "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/prmhapad1.jpg" border="0"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/prmhapad2.jpg" border="0"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/prmhapad3.jpg" border="0"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/prmhapad4.jpg" border="0">',
+        "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/prmhapad1.jpg" width="100%"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/prmhapad2.jpg" width="100%"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/prmhapad3.jpg" width="100%"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/prmhapad4.jpg" width="100%">'
     },
     {
         "name": "CAPSOL ラジエーター",
@@ -838,6 +838,14 @@ if uploaded_file is not None:
                 f"※CSVファイルには必ず以下の列を含めてください: {', '.join(REQUIRED_COLUMNS)}"
             )
         else:
+            # hapadparts数字.jpg 等を parts数字.gif に置換し、既存のpartsロジックと共通化する前処理
+            if 'additional1' in df.columns:
+                df['additional1'] = df['additional1'].str.replace(
+                    r'(?i)hapad(parts\d+)\.(?:jpg|gif|png|jpeg)',
+                    r'\1.gif',
+                    regex=True
+                )
+            
             additional_clean = df['additional1'].fillna('')
             
             # Yahoo側バナーの更地化（正規表現による削除）
@@ -889,6 +897,13 @@ if uploaded_file is not None:
                 
                 pc_insert_banner = np.where(final_cond, pc_b, pc_insert_banner)
                 sp_insert_banner = np.where(final_cond, sp_b, sp_insert_banner)
+                
+            # 20周年バナー（20thanv01.jpg）の特別挿入処理（各種バナーの一番上）
+            is_20th = df['additional1'].fillna('').str.contains('20thanv01.jpg', case=False, regex=False)
+            banner_20th = '<IMG SRC="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/20thanv01.jpg" style="width: 100%;"><br>'
+            
+            pc_insert_banner = np.where(is_20th, banner_20th + pc_insert_banner, pc_insert_banner)
+            sp_insert_banner = np.where(is_20th, banner_20th + sp_insert_banner, sp_insert_banner)
                 
             # 各メディア用バナー挿入つきのヘッダーSeriesの準備 (バナーはここでは結合せず、素のヘッダーとする)
             pc_hdr_supplies = pd.Series(rakuten_header_supplies, index=df.index)
