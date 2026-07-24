@@ -866,6 +866,13 @@ if uploaded_file is not None:
             
             additional_clean = df['additional1'].fillna('')
             
+            # Yahoo側の20周年バナーをdescriptionから削除（is_20th判定用にdf['additional1']には残す）
+            additional_clean = additional_clean.str.replace(
+                r'(?i)<img[^>]*?20thanv01\.jpg[^>]*?>\s*(?:<br\s*/?>\s*)*',
+                '', 
+                regex=True
+            )
+            
             # Yahoo側バナーの更地化（正規表現による削除）
             pattern_clear = r'(?i)(<IMG SRC="https://shopping.c.yimg.jp/lib/solltd/(?:parts|supplies)[^"]*\.gif">)(?:\s*(?:<BR>|<br>)*\s*<IMG SRC="https://shopping.c.yimg.jp/lib/solltd/[^"]+">)+(?:\s*(?:<BR>|<br>)*\s*)(?=</center>)'
             additional_clean = additional_clean.str.replace(pattern_clear, r'\1<BR><BR>', regex=True)
