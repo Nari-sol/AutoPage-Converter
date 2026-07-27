@@ -925,10 +925,11 @@ if uploaded_file is not None:
                 
             # 20周年バナー（20thanv01.jpg）の特別挿入処理（各種バナーの一番上）
             is_20th = df['additional1'].fillna('').str.contains('20thanv01.jpg', case=False, regex=False)
-            banner_20th = '<IMG SRC="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/20thanv01.jpg" style="width: 100%;"><br>'
+            banner_20th_pc = '<IMG width="745" SRC="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/20thanv01.jpg"><br>'
+            banner_20th_sp = '<IMG SRC="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/20thanv01.jpg" width="100%;"><br>'
             
-            pc_insert_banner = np.where(is_20th, banner_20th + pc_insert_banner, pc_insert_banner)
-            sp_insert_banner = np.where(is_20th, banner_20th + sp_insert_banner, sp_insert_banner)
+            pc_insert_banner = np.where(is_20th, banner_20th_pc + pc_insert_banner, pc_insert_banner)
+            sp_insert_banner = np.where(is_20th, banner_20th_sp + sp_insert_banner, sp_insert_banner)
                 
             # 各メディア用バナー挿入つきのヘッダーSeriesの準備 (バナーはここでは結合せず、素のヘッダーとする)
             pc_hdr_supplies = pd.Series(rakuten_header_supplies, index=df.index)
