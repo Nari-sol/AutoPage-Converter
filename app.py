@@ -148,39 +148,58 @@ PARTS_CATEGORY_MAP = {
 }
 
 
-# 左サイドバーの入力UI
-st.sidebar.header("楽天登録用 設定項目")
-genre_id_input = st.sidebar.text_input("ジャンルID", value="")
-catch_copy_input = st.sidebar.text_input("キャッチコピー", value="")
-attr3_input = st.sidebar.text_input("代表カラー", value="-")
-target_cat_row3 = st.sidebar.text_input("表示先カテゴリ（3行目用）", value="商品3")
-target_parts_key = st.sidebar.selectbox("パーツカテゴリ（2行目用）", options=list(PARTS_CATEGORY_MAP.keys()) + ['その他（直接入力）'])
-if target_parts_key == 'その他（直接入力）':
-    selected_path = st.sidebar.text_input("カテゴリパスを直接入力", value="")
-else:
-    selected_path = PARTS_CATEGORY_MAP.get(target_parts_key, '')
+# モード選択UIの追加
+mode_selection = st.sidebar.radio(
+    "処理モードを選択してください",
+    ("楽天モード", "Amazonモード（開発中）")
+)
 
-# 商品画像設定アコーディオンUIの追加
-with st.sidebar.expander("商品画像設定"):
-    # 白背景画像の追加
-    white_bg_input = st.text_input("白背景画像", value="")
-    
-    image_inputs = {}
-    image_keys = [
-        ("メイン画像", "商品画像パス1"),
-        ("画像1", "商品画像パス2"),
-        ("画像2", "商品画像パス3"),
-        ("画像3", "商品画像パス4"),
-        ("画像4", "商品画像パス5"),
-        ("画像5", "商品画像パス6"),
-        ("画像6", "商品画像パス7"),
-        ("画像7", "商品画像パス8"),
-        ("画像8", "商品画像パス9"),
-        ("画像9", "商品画像パス10"),
-        ("画像10", "商品画像パス11"),
-    ]
-    for label, header_name in image_keys:
-        image_inputs[header_name] = st.text_input(label, value="")
+if mode_selection == "楽天モード":
+    # 左サイドバーの入力UI
+    st.sidebar.header("楽天登録用 設定項目")
+    genre_id_input = st.sidebar.text_input("ジャンルID", value="")
+    catch_copy_input = st.sidebar.text_input("キャッチコピー", value="")
+    attr3_input = st.sidebar.text_input("代表カラー", value="-")
+    target_cat_row3 = st.sidebar.text_input("表示先カテゴリ（3行目用）", value="商品3")
+    target_parts_key = st.sidebar.selectbox("パーツカテゴリ（2行目用）", options=list(PARTS_CATEGORY_MAP.keys()) + ['その他（直接入力）'])
+    if target_parts_key == 'その他（直接入力）':
+        selected_path = st.sidebar.text_input("カテゴリパスを直接入力", value="")
+    else:
+        selected_path = PARTS_CATEGORY_MAP.get(target_parts_key, '')
+
+    # 商品画像設定アコーディオンUIの追加
+    with st.sidebar.expander("商品画像設定"):
+        # 白背景画像の追加
+        white_bg_input = st.text_input("白背景画像", value="")
+        
+        image_inputs = {}
+        image_keys = [
+            ("メイン画像", "商品画像パス1"),
+            ("画像1", "商品画像パス2"),
+            ("画像2", "商品画像パス3"),
+            ("画像3", "商品画像パス4"),
+            ("画像4", "商品画像パス5"),
+            ("画像5", "商品画像パス6"),
+            ("画像6", "商品画像パス7"),
+            ("画像7", "商品画像パス8"),
+            ("画像8", "商品画像パス9"),
+            ("画像9", "商品画像パス10"),
+            ("画像10", "商品画像パス11"),
+        ]
+        for label, header_name in image_keys:
+            image_inputs[header_name] = st.text_input(label, value="")
+else:
+    genre_id_input = ""
+    catch_copy_input = ""
+    attr3_input = ""
+    target_cat_row3 = ""
+    selected_path = ""
+    white_bg_input = ""
+    image_inputs = {f"商品画像パス{i}": "" for i in range(1, 12)}
+
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("Amazon用 設定項目")
+    browse_node_input = st.sidebar.text_input("ブラウズノードを入力", value="")
 
 # 画面最上部にタイトルを表示
 st.title("AutoPage Converter")
@@ -314,8 +333,8 @@ BANNER_RULES = [
         "must_keywords": ["CAPSOL"],
         "or_keywords": ["オルタ"],
         "excludes": [],
-        "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0331395353.jpg" border="0">',
-        "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0331395353.jpg" width="100%">'
+        "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0342276293.jpg" border="0"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0342276292.jpg" border="0">',
+        "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0342276293.jpg" width="100%"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0342276292.jpg" width="100%">'
     },
     {
         "name": "HAPAD ローター",
@@ -420,6 +439,14 @@ BANNER_RULES = [
         "excludes": [],
         "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336919795.jpg" border="0">',
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0336919795.jpg" width="100%">'
+    },
+    {
+        "name": "CAPSOL スタビ",
+        "must_keywords": ["CAPSOL"],
+        "or_keywords": ["スタビライザーリンク"],
+        "excludes": [],
+        "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0332893295.jpg" border="0">',
+        "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0332893295.jpg" width="100%">'
     },
     {
         "name": "CAPSOL ファンモーター",
@@ -636,6 +663,63 @@ def load_csv(file):
             
     raise ValueError("CSVファイルの読み込みに失敗しました。文字コード（UTF-8 または Shift_JIS/CP932）またはCSVのフォーマットが正しいか確認してください。")
 
+def process_amazon_csv(df):
+    import os
+    
+    # テンプレートからヘッダーとサンプルデータ（計6行）を読み込む
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    template_path = os.path.join(base_dir, 'sample', 'amazon', 'amazon1333-New_Version.xlsm')
+    
+    try:
+        template_df = pd.read_excel(template_path, engine='openpyxl', nrows=6, header=None, keep_default_na=False)
+        
+        star_char = chr(42)
+        fullwidth_star = chr(65290)
+        template_df = template_df.fillna('').astype(str).replace(star_char, '', regex=False).replace(fullwidth_star, '', regex=False)
+        
+        header_rows = template_df.values.tolist()
+        num_cols = template_df.shape[1]
+        
+        sku_idx = -1
+        name_idx = -1
+        
+        # 4行目（インデックス3）が日本語の項目名
+        row_names = header_rows[3]
+        for i, col_name in enumerate(row_names):
+            if col_name == "SKU":
+                sku_idx = i
+            elif col_name == "商品名":
+                name_idx = i
+                
+    except Exception as e:
+        raise ValueError(f"テンプレートファイルの読み込みに失敗しました: {template_path}\n詳細: {str(e)}")
+        
+    if sku_idx == -1 or name_idx == -1:
+        raise ValueError("テンプレート内に「SKU」または「商品名」の列が見つかりません。")
+
+    empty_series = pd.Series(['' for _ in range(len(df))])
+    
+    sku_series = df.get('商品コード', empty_series).fillna('').astype(str)
+    sku_series = sku_series.str.replace(star_char, '', regex=False).str.replace(fullwidth_star, '', regex=False)
+    sku_list = sku_series.tolist()
+    
+    name_series = df.get('商品名', empty_series).fillna('').astype(str)
+    name_series = name_series.str.replace(star_char, '', regex=False).str.replace(fullwidth_star, '', regex=False)
+    name_list = name_series.tolist()
+    
+    result_data = []
+    for r in header_rows:
+        result_data.append(r)
+        
+    for s, n in zip(sku_list, name_list):
+        row = ['' for _ in range(num_cols)]
+        row[sku_idx] = s
+        row[name_idx] = n
+        result_data.append(row)
+        
+    final_df = pd.DataFrame(result_data).replace(['nan', 'NaN', 'None', 'NaT'], '')
+    return final_df
+
 def extract_fitment_info(html_content):
     if not isinstance(html_content, str) or pd.isna(html_content):
         return ""
@@ -836,14 +920,143 @@ def format_banner_width(banner_html, width_val):
     else:
         return re.sub(r'(?i)<img', f'<img width="{width_val}"', banner_html)
 
-# CSVファイルのアップローダーを配置
-uploaded_file = st.file_uploader(
-    "Yahoo!ショッピングからダウンロードしたCSVファイルを選択してください", 
-    type=["csv"],
-    help="必須列: code, name, additional1"
-)
+if mode_selection == "楽天モード":
+    st.subheader("楽天用 ファイル変換処理")
+    uploaded_file = st.file_uploader(
+        "Yahoo!ショッピングからダウンロードしたCSVファイルを選択してください（楽天用）", 
+        type=["csv"],
+        help="必須列: code, name, additional1"
+    )
+    
+    if st.button("楽天用ファイル変換を実行", type="primary"):
+        st.session_state['run_rakuten'] = True
+        
+    if uploaded_file is None:
+        st.session_state['run_rakuten'] = False
+        st.info("CSVファイルをアップロードし、「実行」ボタンを押してください。")
+        st.stop()
+        
+    if not st.session_state.get('run_rakuten', False):
+        st.stop()
+
+elif mode_selection == "Amazonモード（開発中）":
+    st.subheader("Amazon用 ファイル変換処理")
+    uploaded_file_amazon = st.file_uploader(
+        "処理するCSVファイルを選択してください（Amazon用）",
+        type=["csv"]
+    )
+    
+    if uploaded_file_amazon is not None:
+        try:
+            df, enc = load_csv(uploaded_file_amazon)
+            st.success("ファイルの読み込みに成功しました。")
+            
+            if st.button("Amazon用ファイル変換を実行", type="primary"):
+                with st.spinner("変換処理中..."):
+                    amazon_df = process_amazon_csv(df)
+                    
+                    output = io.BytesIO()
+                    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                        amazon_df.to_excel(writer, index=False, header=False)
+                        worksheet = writer.book.active
+                        
+                        from openpyxl.styles import Alignment, PatternFill, Font
+                        from openpyxl.utils.cell import column_index_from_string
+                        
+                        left_alignment = Alignment(horizontal='left')
+                        
+                        font_row2 = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
+                        font_row3_4 = Font(name="Calibri", size=11, color="FFFFFF")
+                        font_row2_black = Font(name="Calibri", size=11, bold=True, color="000000")
+                        font_row3_4_black = Font(name="Calibri", size=11, color="000000")
+                        font_data = Font(name="游ゴシック", size=12)
+                        
+                        merge_ranges = [
+                            "A3:C3", "D3:F3", "G3:X3", "Y3:AH3", 
+                            "AI3:CF3", "CG3:DH3", "DI3:EM3", "EN3:FD3", "FE3:HF3"
+                        ]
+                        for r in merge_ranges:
+                            worksheet.merge_cells(r)
+                            top_left = r.split(':')[0]
+                            worksheet[top_left].alignment = left_alignment
+                            
+                        # 背景色の設定 (1〜4行目) および 文字色の設定 (2〜4行目)
+                        color_ranges = [
+                            ("A", "F", "0086DD"),
+                            ("G", "X", "4A8915"),
+                            ("Y", "AH", "008599"),
+                            ("AI", "CF", "8FDE0D"),
+                            ("CG", "DH", "E1015D"),
+                            ("DI", "EM", "632523"),
+                            ("EN", "FD", "FF5D00"),
+                            ("FE", "HF", "793DAD")
+                        ]
+                        
+                        for start_col_str, end_col_str, hex_color in color_ranges:
+                            start_col = column_index_from_string(start_col_str)
+                            end_col = column_index_from_string(end_col_str)
+                            fill = PatternFill(start_color=hex_color, end_color=hex_color, fill_type="solid")
+                            for row_idx in range(1, 5):
+                                for col_idx in range(start_col, end_col + 1):
+                                    cell = worksheet.cell(row=row_idx, column=col_idx)
+                                    cell.fill = fill
+                                    if row_idx == 2:
+                                        if start_col_str == "AI":
+                                            cell.font = font_row2_black
+                                        else:
+                                            cell.font = font_row2
+                                    elif row_idx in (3, 4):
+                                        if start_col_str == "AI":
+                                            cell.font = font_row3_4_black
+                                        else:
+                                            cell.font = font_row3_4
+                                        
+                        # 6行目以降（データ行）のフォントと、6行目（サンプルデータ）の背景色設定
+                        gray_fill = PatternFill(start_color="D9D9D9", end_color="D9D9D9", fill_type="solid")
+                        for row_idx in range(6, worksheet.max_row + 1):
+                            for col_idx in range(1, worksheet.max_column + 1):
+                                cell = worksheet.cell(row=row_idx, column=col_idx)
+                                cell.font = font_data
+                                if row_idx == 6:
+                                    cell.fill = gray_fill
+                            
+                        # 行の高さ設定
+                        worksheet.row_dimensions[3].height = 42
+                        worksheet.row_dimensions[4].height = 28
+                        
+                        # 列の幅設定
+                        col_widths = {
+                            "A": 14.20, "B": 7.45, "C": 26.77, "D": 7.45, "E": 5.94, "F": 14.32, "G": 4.89, "H": 11.29, "I": 7.45, "J": 9.19, "K": 5.35, "L": 16.41, "M": 9.31, "N": 9.31, "O": 9.31, "P": 9.31, "Q": 10.01, "R": 28.98, "S": 30.26, "T": 7.45, "U": 6.17, "V": 7.45, "W": 12.22, "X": 17.69, "Y": 12.22, "Z": 9.31,
+                            "AA": 9.31, "AB": 9.31, "AC": 9.31, "AD": 9.31, "AE": 9.31, "AF": 9.31, "AG": 9.31, "AH": 9.31, "AI": 6.17, "AJ": 7.45, "AK": 9.31, "AL": 9.31, "AM": 9.31, "AN": 9.31, "AO": 9.31, "AP": 9.31, "AQ": 9.31, "AR": 9.31, "AS": 9.31, "AT": 6.17, "AU": 3.61, "AV": 9.31, "AW": 9.31, "AX": 9.31, "AY": 9.31, "AZ": 7.45,
+                            "BA": 6.17, "BB": 2.33, "BC": 4.89, "BD": 8.73, "BE": 6.17, "BF": 8.73, "BG": 9.31, "BH": 9.31, "BI": 9.31, "BJ": 9.31, "BK": 28.17, "BL": 3.61, "BM": 9.31, "BN": 9.31, "BO": 9.31, "BP": 9.31, "BQ": 9.31, "BR": 4.89, "BS": 8.73, "BT": 7.45, "BU": 6.17, "BV": 9.31, "BW": 4.89, "BX": 9.31, "BY": 9.31, "BZ": 9.31,
+                            "CA": 9.31, "CB": 4.89, "CC": 15.13, "CD": 20.25, "CE": 7.45, "CF": 10.01, "CG": 12.57, "CH": 7.45, "CI": 9.31, "CJ": 9.31, "CK": 9.31, "CL": 9.31, "CM": 9.31, "CN": 9.31, "CO": 9.31, "CP": 9.31, "CQ": 9.31, "CR": 9.31, "CS": 9.31, "CT": 9.31, "CU": 9.31, "CV": 9.31, "CW": 9.31, "CX": 9.31, "CY": 9.31, "CZ": 9.31,
+                            "DA": 9.31, "DB": 9.31, "DC": 9.31, "DD": 9.31, "DE": 9.31, "DF": 9.31, "DG": 9.31, "DH": 9.31, "DI": 23.98, "DJ": 8.61, "DK": 9.31, "DL": 9.31, "DM": 9.89, "DN": 28.63, "DO": 9.31, "DP": 9.31, "DQ": 9.31, "DR": 26.07, "DS": 23.63, "DT": 23.63, "DU": 9.31, "DV": 9.31, "DW": 35.73, "DX": 9.31, "DY": 9.31, "DZ": 9.31,
+                            "EA": 9.31, "EB": 35.85, "EC": 34.22, "ED": 39.81, "EE": 34.22, "EF": 39.81, "EG": 34.22, "EH": 39.81, "EI": 34.22, "EJ": 39.81, "EK": 34.22, "EL": 39.81, "EM": 15.01, "EN": 7.45, "EO": 18.97, "EP": 12.57, "EQ": 16.41, "ER": 13.85, "ES": 17.69, "ET": 13.85, "EU": 22.81, "EV": 16.41, "EW": 20.25, "EX": 17.69, "EY": 21.53, "EZ": 12.57,
+                            "FA": 16.41, "FB": 10.01, "FC": 13.85, "FD": 3.61, "FE": 4.89, "FF": 6.17, "FG": 9.31, "FH": 9.31, "FI": 21.53, "FJ": 9.31, "FK": 9.31, "FL": 9.31, "FM": 9.31, "FN": 46.79, "FO": 9.31, "FP": 9.31, "FQ": 9.31, "FR": 9.31, "FS": 17.69, "FT": 18.16, "FU": 14.32, "FV": 29.80, "FW": 9.31, "FX": 20.14, "FY": 22.70
+                        }
+                        for col_letter, width_val in col_widths.items():
+                            worksheet.column_dimensions[col_letter].width = width_val
+                            
+                        # 1行目と5行目を非表示に設定
+                        worksheet.row_dimensions[1].hidden = True
+                        worksheet.row_dimensions[5].hidden = True
+                            
+                    excel_data = output.getvalue()
+                    
+                    st.success("変換が完了しました。")
+                    st.download_button(
+                        label="変換済みExcelファイルをダウンロード",
+                        data=excel_data,
+                        file_name="amazon_upload.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
+        except Exception as e:
+            st.error(f"エラーが発生しました: {str(e)}")
+            
+    st.stop()
 
 if uploaded_file is not None:
+
     try:
         df, detected_encoding = load_csv(uploaded_file)
         
