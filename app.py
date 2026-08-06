@@ -200,6 +200,19 @@ else:
     st.sidebar.markdown("---")
     st.sidebar.subheader("Amazon用 設定項目")
     browse_node_input = st.sidebar.text_input("ブラウズノードを入力", value="")
+    
+    amazon_images = []
+    with st.sidebar.expander("商品画像URL設定"):
+        amazon_images.append(st.text_input("メイン画像のURL", value=""))
+        amazon_images.append(st.text_input("その他の画像のURL 1", value=""))
+        amazon_images.append(st.text_input("その他の画像のURL 2", value=""))
+        amazon_images.append(st.text_input("その他の画像のURL 3", value=""))
+        amazon_images.append(st.text_input("その他の画像のURL 4", value=""))
+        amazon_images.append(st.text_input("その他の画像のURL 5", value=""))
+        amazon_images.append(st.text_input("その他の画像のURL 6", value=""))
+        amazon_images.append(st.text_input("その他の画像のURL 7", value=""))
+        amazon_images.append(st.text_input("その他の画像のURL 8", value=""))
+        amazon_images.append(st.text_input("見本画像のURL", value=""))
 
 # 画面最上部にタイトルを表示
 st.title("AutoPage Converter")
@@ -663,7 +676,9 @@ def load_csv(file):
             
     raise ValueError("CSVファイルの読み込みに失敗しました。文字コード（UTF-8 または Shift_JIS/CP932）またはCSVのフォーマットが正しいか確認してください。")
 
-def process_amazon_csv(df):
+def process_amazon_csv(df, browse_node_val="", amazon_images=None):
+    if amazon_images is None:
+        amazon_images = [""] * 10
     import os
     
     # テンプレートからヘッダーとサンプルデータ（計6行）を読み込む
@@ -682,6 +697,13 @@ def process_amazon_csv(df):
         
         sku_idx = -1
         name_idx = -1
+        desc_idx = -1
+        spec_idx = 35  # AJ列 (bullet_point1)
+        spec2_idx = 36 # AK列 (bullet_point2)
+        keyword_idx = 40 # AO列 (generic_keywords)
+        part_num_idx = 55 # BD列 (part_number)
+        price_idx = 117 # DN列 (商品の販売価格)
+        shipping_template_idx = 142 # EM列 (配送テンプレート (JP))
         
         # 4行目（インデックス3）が日本語の項目名
         row_names = header_rows[3]
@@ -690,6 +712,8 @@ def process_amazon_csv(df):
                 sku_idx = i
             elif col_name == "商品名":
                 name_idx = i
+            elif col_name == "商品説明":
+                desc_idx = i
                 
     except Exception as e:
         raise ValueError(f"テンプレートファイルの読み込みに失敗しました: {template_path}\n詳細: {str(e)}")
@@ -699,7 +723,7 @@ def process_amazon_csv(df):
 
     empty_series = pd.Series(['' for _ in range(len(df))])
     
-    sku_series = df.get('商品コード', empty_series).fillna('').astype(str)
+    sku_series = df.get('code', df.get('商品コード', empty_series)).fillna('').astype(str)
     sku_series = sku_series.str.replace(star_char, '', regex=False).str.replace(fullwidth_star, '', regex=False)
     sku_list = sku_series.tolist()
     
@@ -707,15 +731,211 @@ def process_amazon_csv(df):
     name_series = name_series.str.replace(star_char, '', regex=False).str.replace(fullwidth_star, '', regex=False)
     name_list = name_series.tolist()
     
+    ship_weight_series = df.get('ship-weight', empty_series).fillna('').astype(str)
+    ship_weight_list = ship_weight_series.tolist()
+    
+    headline_series = df.get('headline', empty_series).fillna('').astype(str)
+    headline_series = headline_series.str.replace(star_char, '', regex=False).str.replace(fullwidth_star, '', regex=False)
+    headline_list = headline_series.tolist()
+    
+    add1_series = df.get('additional1', empty_series).fillna('').astype(str)
+    add1_list = add1_series.tolist()
+    
+    postage_series = df.get('postage-set', empty_series).fillna('').astype(str)
+    postage_list = postage_series.tolist()
+    
+    price_series = df.get('price', empty_series).fillna(0)
+    price_list = price_series.tolist()
+    
     result_data = []
     for r in header_rows:
         result_data.append(r)
         
-    for s, n in zip(sku_list, name_list):
-        row = ['' for _ in range(num_cols)]
-        row[sku_idx] = s
-        row[name_idx] = n
-        result_data.append(row)
+    for s, n, sw, hl, a1, post, pr in zip(sku_list, name_list, ship_weight_list, headline_list, add1_list, postage_list, price_list):
+        if "supplies" in a1:
+            row = ['' for _ in range(num_cols)]
+            row[sku_idx] = s
+            row[name_idx] = n
+            row[0] = s
+            row[6] = "【CAPSOL】 " + hl
+            
+            import re
+            b1_idx = a1.find("●商品の状態")
+            b1 = ""
+            if b1_idx != -1:
+                b1_end = a1.find("●", b1_idx + 1)
+                b1 = a1[b1_idx:b1_end] if b1_end != -1 else a1[b1_idx:]
+            
+            b2_idx = a1.find("●商品名")
+            if b2_idx == -1:
+                b2_idx = a1.find("●商品説明")
+            
+            b2 = ""
+            if b2_idx != -1:
+                b2_end = a1.find("●", b2_idx + 1)
+                b2 = a1[b2_idx:b2_end] if b2_end != -1 else a1[b2_idx:]
+            
+            if b1:
+                b1 = re.sub(r'</?(?!br\b)[a-zA-Z0-9]+[^>]{0,}>', '', b1, flags=re.IGNORECASE)
+            if b2:
+                b2 = re.sub(r'</?(?!br\b)[a-zA-Z0-9]+[^>]{0,}>', '', b2, flags=re.IGNORECASE)
+            
+            product_desc = b1 + b2
+            if desc_idx != -1:
+                row[desc_idx] = product_desc
+                
+            spec_target_idx = a1.find("●商品名")
+            spec_keyword = "●商品名"
+            if spec_target_idx == -1:
+                spec_target_idx = a1.find("●商品説明")
+                spec_keyword = "●商品説明"
+                
+            spec_text = ""
+            if spec_target_idx != -1:
+                after_keyword = a1[spec_target_idx + len(spec_keyword):]
+                parts = re.split(r'<[^>]+>', after_keyword)
+                for p in parts:
+                    if p.strip():
+                        spec_text = p
+                        break
+                        
+                if spec_text:
+                    spec_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\-\+＋＝=]', '', spec_text)
+                    
+            if spec_idx != -1 and spec_text:
+                row[spec_idx] = spec_text
+                
+            spec2_target_idx = a1.find("●商品説明")
+            spec2_text = ""
+            if spec2_target_idx != -1:
+                after_spec2_keyword = a1[spec2_target_idx:]
+                next_circle_idx = after_spec2_keyword.find("●", 1)
+                
+                if next_circle_idx != -1:
+                    raw_block = after_spec2_keyword[:next_circle_idx]
+                else:
+                    raw_block = after_spec2_keyword
+                    
+                raw_block = raw_block[len("●商品説明"):]
+                
+                cleaned_block = re.sub(r'</?(?!br\b)[a-zA-Z0-9]+[^>]{0,}>', '', raw_block, flags=re.IGNORECASE)
+                newline_block = re.sub(r'</?br[^>]{0,}>', '\n', cleaned_block, flags=re.IGNORECASE)
+                spec2_text = newline_block.strip()
+                
+            if spec2_idx != -1 and spec2_text:
+                row[spec2_idx] = spec2_text
+                
+            # --- 新規追加: 検索用キーワード (AO列) の生成 ---
+            if keyword_idx != -1:
+                row[keyword_idx] = str(hl) + " SOL エスオーエル"
+                
+            # --- 新規追加: メーカー型番 (BD列) の抽出 ---
+            if part_num_idx != -1:
+                row[part_num_idx] = str(s).split('-')[0]
+            
+            if str(row[0]).strip() != "":
+                while len(row) <= 174:
+                    row.append("")
+                    
+                row[1] = "AUTO_PART"
+                row[8] = "CAPSOL"
+                row[9] = "GTIN免除"
+                row[11] = browse_node_val
+                row[20] = "SOL"
+                row[21] = "CAPSOL"
+                
+                for i in range(10):
+                    row[24 + i] = amazon_images[i]
+                row[56] = "正規品"
+                row[62] = "いいえ"
+                row[69] = "いいえ"
+                row[74] = "特になし"
+                row[80] = "車種専用フィット"
+                row[85] = "新品"
+                row[112] = "出品者出荷（デフォルト）"
+                row[113] = "0"
+                row[160] = "中国"
+                row[161] = "●保証について /商品到着後30日間の商品保証を致します。 当店側のミスでお手元に届いた商品が違った場合、初期不良の場合でも商品到着後30日間以内での対応となりますので、速やかな商品確認をお願い致します。 新たに商品のご手配をさせて頂きますが、ご手配できない場合にはご返金させて頂きます。 商品交換時に発生する費用および損害等は保証できませんのでご了承下さい。 取付ミスによる不具合や破損、加工済は保証対象外となります。 ●返品交換について / 初期不良・破損・ご注文と異なった商品をお届けした場合、送料往復負担で交換または返品をお受け致します。 ※お客様都合による返品・交換に関しましてはお客様送料負担となります。 ●ご注文のキャンセル・返品交換について /ご注文後のキャンセルいかなる場合もお受けする事が出来ません。 ※但し一度商品をお受け取り頂き、お客様送料ご負担にてご返送頂ければ承ります。 お客様のご都合による返品/交換に関してもお客様送料ご負担にてご返送頂ければ承ります。 ※詳しくはAmazon.co.jp 返品ポリシーをご確認ください。 ●その他 /パッケージにダメージがある場合が御座います。 写真撮影の為、パッケージを開封する場合が御座います。"
+                row[164] = "該当なし"
+                row[174] = "いいえ"
+                
+            try:
+                base_price = float(pr)
+            except ValueError:
+                base_price = 0.0
+                
+            if price_idx != -1:
+                row[price_idx] = str(int(base_price))
+                
+            if shipping_template_idx != -1:
+                sku_val = str(row[0])
+                if sku_val.endswith(("SSS", "VVV", "WWW", "XXX", "YYY")):
+                    row[shipping_template_idx] = sku_val[-3:]
+                else:
+                    row[shipping_template_idx] = "移行された配送パターン"
+                
+            result_data.append(row)
+            
+            suffix = ""
+            post_clean = str(post).strip()
+            
+            if post_clean == "6" or post_clean == "6.0":
+                suffix = "SSS"
+            else:
+                sw_clean = str(sw).strip()
+                try:
+                    sw_float = float(sw_clean)
+                    if sw_float == 0.0:
+                        suffix = "VVV"
+                    elif sw_float == 100.0:
+                        suffix = "WWW"
+                    elif sw_float == 1.0:
+                        suffix = "XXX"
+                    elif sw_float == 1000.0:
+                        suffix = "YYY"
+                except ValueError:
+                    if sw_clean == "0":
+                        suffix = "VVV"
+                    elif sw_clean == "100":
+                        suffix = "WWW"
+                    elif sw_clean == "1":
+                        suffix = "XXX"
+                    elif sw_clean == "1000":
+                        suffix = "YYY"
+                
+            if suffix != "":
+                dup_row = list(row)
+                new_sku = s + suffix
+                dup_row[sku_idx] = new_sku
+                dup_row[0] = new_sku
+                dup_row[6] = "CAPSOL " + hl
+                
+                add_price = 0
+                if suffix == "SSS":
+                    add_price = 180
+                elif suffix == "VVV":
+                    add_price = 770
+                elif suffix == "WWW":
+                    add_price = 1100
+                elif suffix == "XXX":
+                    add_price = 1650
+                elif suffix == "YYY":
+                    add_price = 3850
+                    
+                if price_idx != -1:
+                    dup_row[price_idx] = str(int(base_price + add_price))
+                    
+                if shipping_template_idx != -1:
+                    dup_sku_val = str(dup_row[0])
+                    if dup_sku_val.endswith(("SSS", "VVV", "WWW", "XXX", "YYY")):
+                        dup_row[shipping_template_idx] = dup_sku_val[-3:]
+                    else:
+                        dup_row[shipping_template_idx] = "移行された配送パターン"
+                    
+                result_data.append(dup_row)
+        else:
+            # suppliesが含まれない場合の別処理用
+            pass
         
     final_df = pd.DataFrame(result_data).replace(['nan', 'NaN', 'None', 'NaT'], '')
     return final_df
@@ -953,7 +1173,7 @@ elif mode_selection == "Amazonモード（開発中）":
             
             if st.button("Amazon用ファイル変換を実行", type="primary"):
                 with st.spinner("変換処理中..."):
-                    amazon_df = process_amazon_csv(df)
+                    amazon_df = process_amazon_csv(df, browse_node_input, amazon_images)
                     
                     output = io.BytesIO()
                     with pd.ExcelWriter(output, engine='openpyxl') as writer:
@@ -1013,12 +1233,14 @@ elif mode_selection == "Amazonモード（開発中）":
                                         
                         # 6行目以降（データ行）のフォントと、6行目（サンプルデータ）の背景色設定
                         gray_fill = PatternFill(start_color="D9D9D9", end_color="D9D9D9", fill_type="solid")
+                        center_alignment = Alignment(horizontal='center')
                         for row_idx in range(6, worksheet.max_row + 1):
                             for col_idx in range(1, worksheet.max_column + 1):
                                 cell = worksheet.cell(row=row_idx, column=col_idx)
                                 cell.font = font_data
                                 if row_idx == 6:
                                     cell.fill = gray_fill
+                                    cell.alignment = center_alignment
                             
                         # 行の高さ設定
                         worksheet.row_dimensions[3].height = 42
