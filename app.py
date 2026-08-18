@@ -700,6 +700,9 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
         desc_idx = -1
         spec_idx = 35  # AJ列 (bullet_point1)
         spec2_idx = 36 # AK列 (bullet_point2)
+        spec3_idx = 37 # AL列 (bullet_point3)
+        spec4_idx = 38 # AM列 (bullet_point4)
+        spec5_idx = 39 # AN列 (bullet_point5)
         keyword_idx = 40 # AO列 (generic_keywords)
         part_num_idx = 55 # BD列 (part_number)
         price_idx = 117 # DN列 (商品の販売価格)
@@ -747,11 +750,110 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
     price_series = df.get('price', empty_series).fillna(0)
     price_list = price_series.tolist()
     
+    # === 新規追加: parts条件の事前グループ化および適合車種の集約 ===
+    import re
+    
+    yahoo_name_series = df.get('name', empty_series).fillna('').astype(str)
+    yahoo_name_series = yahoo_name_series.str.replace(star_char, '', regex=False).str.replace(fullwidth_star, '', regex=False)
+    yahoo_name_list = yahoo_name_series.tolist()
+    
+    parts_fitment_data = {}
+    parts_processed_base_skus = set()
+    parts_group_names = {}
+    parts_base_sku_counters = {}
+    parts_fitment_notes = {}
+    
+    for idx, (s, a1, y_name) in enumerate(zip(sku_list, add1_list, yahoo_name_list)):
+        if "parts" in str(a1):
+            s_clean = str(s).replace(chr(42), '').replace(chr(65290), '')
+            base_sku = s_clean.split('-')[0]
+            
+            start_idx = str(a1).find("●適合車種")
+            if start_idx != -1:
+                after_keyword = str(a1)[start_idx + len("●適合車種"):]
+                next_circle_idx = after_keyword.find("●")
+                fitment_block = after_keyword[:next_circle_idx] if next_circle_idx != -1 else after_keyword
+                
+                br_parts = re.split(r'<br[^>]{0,}>', fitment_block, flags=re.IGNORECASE)
+                
+                if len(br_parts) > 2:
+                    manufacturer = br_parts[1].strip()
+                    manufacturer = re.sub(r'</?[a-zA-Z0-9]+[^>]{0,}>', '', manufacturer, flags=re.IGNORECASE).strip()
+                    
+                    target_line = br_parts[2].strip()
+                    target_line = re.sub(r'</?[a-zA-Z0-9]+[^>]{0,}>', '', target_line, flags=re.IGNORECASE).strip()
+                    
+                    if target_line:
+                        if ' ' not in target_line and '　' not in target_line:
+                            import streamlit as st
+                            st.error(f"エラー: SKU {s_clean} の適合車種データに規定のスペース区切りがありません。\n対象テキスト: {target_line}")
+                            st.stop()
+                        
+                        last_space_idx = max(target_line.rfind(' '), target_line.rfind('　'))
+                        if last_space_idx != -1:
+                            car_name = target_line[:last_space_idx].strip()
+                            car_model = target_line[last_space_idx+1:].strip()
+                        else:
+                            car_name = target_line.strip()
+                            car_model = ""
+                        
+                        group_key = (base_sku, manufacturer)
+                        if group_key not in parts_fitment_data:
+                            parts_fitment_data[group_key] = []
+                        parts_fitment_data[group_key].append({"car_name": car_name, "model": car_model})
+                        
+                        if group_key not in parts_fitment_notes:
+                            note_match = re.search(r'(※.*?(?=<br[^>]*>|$))', fitment_block, flags=re.IGNORECASE | re.DOTALL)
+                            parts_fitment_notes[group_key] = note_match.group(1).strip() if note_match else ""
+                            
+                        if group_key not in parts_group_names:
+                            parts_group_names[group_key] = []
+                        parts_group_names[group_key].append(str(y_name))
+                
+    parts_combined_fitment = {}
+    for group_key, items in parts_fitment_data.items():
+        grouped_by_car = {}
+        for item in items:
+            c_name = item["car_name"]
+            if c_name not in grouped_by_car:
+                grouped_by_car[c_name] = []
+            grouped_by_car[c_name].append(item["model"])
+            
+        formatted_lines = []
+        for c_name, models in grouped_by_car.items():
+            models_str = " ".join(models)
+            formatted_lines.append(f"{c_name} {models_str}")
+            
+        if formatted_lines:
+            combined_str = "<br>".join(formatted_lines)
+            note = parts_fitment_notes.get(group_key, "")
+            if note:
+                parts_combined_fitment[group_key] = combined_str + "<br>" + note + "<br><br>"
+            else:
+                parts_combined_fitment[group_key] = combined_str + "<br><br>"
+        else:
+            parts_combined_fitment[group_key] = ""
+            
+    parts_best_name = {}
+    for group_key, names_list in parts_group_names.items():
+        base_sku, manufacturer = group_key
+        keywords = re.split(r'[/ 　]+', manufacturer)
+        keywords = [k.strip() for k in keywords if k.strip()]
+        
+        found_name = names_list[0]
+        if keywords:
+            for cand_name in names_list:
+                if any(kw in cand_name for kw in keywords):
+                    found_name = cand_name
+                    break
+        parts_best_name[group_key] = found_name
+    # ========================================================
+    
     result_data = []
     for r in header_rows:
         result_data.append(r)
         
-    for s, n, sw, hl, a1, post, pr in zip(sku_list, name_list, ship_weight_list, headline_list, add1_list, postage_list, price_list):
+    for s, n, sw, hl, a1, post, pr, y_name in zip(sku_list, name_list, ship_weight_list, headline_list, add1_list, postage_list, price_list, yahoo_name_list):
         if "supplies" in a1:
             row = ['' for _ in range(num_cols)]
             row[sku_idx] = s
@@ -910,6 +1012,274 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
                 dup_row[0] = new_sku
                 dup_row[6] = "CAPSOL " + hl
                 
+                add_price = 0
+                if suffix == "SSS":
+                    add_price = 180
+                elif suffix == "VVV":
+                    add_price = 770
+                elif suffix == "WWW":
+                    add_price = 1100
+                elif suffix == "XXX":
+                    add_price = 1650
+                elif suffix == "YYY":
+                    add_price = 3850
+                    
+                if price_idx != -1:
+                    dup_row[price_idx] = str(int(base_price + add_price))
+                    
+                if shipping_template_idx != -1:
+                    dup_sku_val = str(dup_row[0])
+                    if dup_sku_val.endswith(("SSS", "VVV", "WWW", "XXX", "YYY")):
+                        dup_row[shipping_template_idx] = dup_sku_val[-3:]
+                    else:
+                        dup_row[shipping_template_idx] = "移行された配送パターン"
+                    
+                result_data.append(dup_row)
+        elif "parts" in a1:
+            s_clean = str(s).replace(chr(42), '').replace(chr(65290), '')
+            base_sku = s_clean.split('-')[0]
+            
+            manufacturer = ""
+            start_idx = str(a1).find("●適合車種")
+            if start_idx != -1:
+                after_keyword = str(a1)[start_idx + len("●適合車種"):]
+                br_parts = re.split(r'<br[^>]{0,}>', after_keyword, flags=re.IGNORECASE)
+                if len(br_parts) > 1:
+                    manufacturer = br_parts[1].strip()
+                    manufacturer = re.sub(r'</?[a-zA-Z0-9]+[^>]{0,}>', '', manufacturer, flags=re.IGNORECASE).strip()
+            
+            group_key = (base_sku, manufacturer)
+            
+            if group_key in parts_processed_base_skus:
+                continue
+            parts_processed_base_skus.add(group_key)
+            
+            if base_sku not in parts_base_sku_counters:
+                parts_base_sku_counters[base_sku] = 1
+            else:
+                parts_base_sku_counters[base_sku] += 1
+            
+            new_branch = f"{parts_base_sku_counters[base_sku]:03d}"
+            renumbered_sku = f"{base_sku}-{new_branch}"
+            
+            import re
+            
+            raw_name = parts_best_name.get(group_key, y_name)
+            
+            is_hapad = "HAPAD" in raw_name
+            if is_hapad:
+                cleansed_name = raw_name.replace("【HAPAD】", "").replace("HAPAD", "")
+                base_prefix = "【HAPAD】 "
+                derived_prefix = "HAPAD "
+            else:
+                cleansed_name = raw_name.replace("【CAPSOL】", "").replace("CAPSOL", "")
+                base_prefix = "【CAPSOL】 "
+                derived_prefix = "CAPSOL "
+                
+            cleansed_name = re.sub(r'18時まで即日(?:発送|出荷)', '', cleansed_name)
+            
+            manufacturer_string = group_key[1]
+            if manufacturer_string:
+                keywords = re.split(r'[/ 　]+', manufacturer_string)
+                for kw in keywords:
+                    kw = kw.strip()
+                    if kw:
+                        cleansed_name = re.sub(f'{re.escape(kw)}(?!車用)', lambda m: f'{m.group(0)}車用', cleansed_name, flags=re.IGNORECASE)
+                        
+            cleansed_name = re.sub(r'[ 　]+', ' ', cleansed_name).strip()
+            
+            row = ['' for _ in range(num_cols)]
+            row[sku_idx] = renumbered_sku
+            row[name_idx] = base_prefix + cleansed_name
+            row[0] = renumbered_sku
+            parts_keywords = ["●商品の状態", "●適合車種", "●商品説明", "●純正品番", "●備考"]
+            combined_desc = ""
+            for kw in parts_keywords:
+                if kw == "●適合車種" and group_key in parts_combined_fitment and parts_combined_fitment[group_key]:
+                    combined_desc += "●適合車種<br>" + parts_combined_fitment[group_key]
+                    continue
+                    
+                kw_idx = a1.find(kw)
+                if kw_idx != -1:
+                    next_circle_idx = a1.find("●", kw_idx + 1)
+                    if next_circle_idx != -1:
+                        block = a1[kw_idx:next_circle_idx]
+                    else:
+                        block = a1[kw_idx:]
+                    
+                    cleaned_block = re.sub(r'</?(?!br\b)[a-zA-Z0-9]+[^>]{0,}>', '', block, flags=re.IGNORECASE)
+                    combined_desc += cleaned_block
+            
+            if desc_idx != -1:
+                row[desc_idx] = combined_desc
+                
+                aj_match = re.search(r'●適合車種<br[^>]*>(.*?)(?:<br[^>]*>)?(?:※|$)', combined_desc, flags=re.IGNORECASE | re.DOTALL)
+                if aj_match:
+                    aj_text = aj_match.group(1).strip()
+                    aj_text = re.sub(r'(?:<br[^>]*>\s*)+', ' / ', aj_text, flags=re.IGNORECASE)
+                    aj_text = re.sub(r'(?: / |/|\s)+$', '', aj_text)
+                    row[35] = aj_text
+                    
+            if spec2_idx != -1:
+                ak_target_idx = a1.find("●商品説明")
+                if ak_target_idx == -1:
+                    ak_target_idx = a1.find("●商品名")
+                
+                if ak_target_idx != -1:
+                    ak_block = a1[ak_target_idx:]
+                    ak_br_parts = re.split(r'<br[^>]*>', ak_block, maxsplit=2, flags=re.IGNORECASE)
+                    if len(ak_br_parts) > 2:
+                        ak_text = ak_br_parts[1]
+                        ak_text = re.sub(r'<[^>]+>', '', ak_text)
+                        ak_text = ak_text.strip()
+                        ak_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\-\+＋＝=]', '', ak_text)
+                        ak_text = ak_text.strip()
+                        if ak_text:
+                            row[spec2_idx] = ak_text
+
+            if spec3_idx != -1:
+                al_target_idx = a1.find("●純正品番")
+                if al_target_idx != -1:
+                    al_block = a1[al_target_idx:]
+                    al_br_parts = re.split(r'<br[^>]*>', al_block, maxsplit=2, flags=re.IGNORECASE)
+                    if len(al_br_parts) > 2:
+                        al_text = al_br_parts[1]
+                        al_text = re.sub(r'<[^>]+>', '', al_text)
+                        al_text = al_text.strip()
+                        al_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\-\+＋＝=]', '', al_text)
+                        al_text = al_text.strip()
+                        if al_text:
+                            row[spec3_idx] = al_text
+
+            if spec4_idx != -1:
+                am_target_idx = a1.find("●適合車種")
+                if am_target_idx != -1:
+                    after_am_target = a1[am_target_idx + len("●適合車種"):]
+                    next_circle_idx = after_am_target.find("●")
+                    if next_circle_idx != -1:
+                        am_block = after_am_target[:next_circle_idx]
+                    else:
+                        am_block = after_am_target
+                    
+                    am_match = re.search(r'(※.*?(?=<br[^>]*>|$))', am_block, flags=re.IGNORECASE | re.DOTALL)
+                    if am_match:
+                        am_text = am_match.group(1)
+                        am_text = re.sub(r'<[^>]+>', '', am_text)
+                        am_text = am_text.strip()
+                        am_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\-\+＋＝=]', '', am_text)
+                        am_text = am_text.strip()
+                        if am_text:
+                            row[spec4_idx] = "※" + am_text
+
+            if spec5_idx != -1:
+                an_target_idx = a1.find("●純正品番")
+                if an_target_idx != -1:
+                    after_an_target = a1[an_target_idx + len("●純正品番"):]
+                    next_circle_idx = after_an_target.find("●")
+                    if next_circle_idx == -1:
+                        next_circle_idx = len(after_an_target)
+                    br2_match = re.search(r'<br[^>]*>\s*<br[^>]*>', after_an_target, flags=re.IGNORECASE)
+                    if br2_match:
+                        br2_idx = br2_match.start()
+                    else:
+                        br2_idx = len(after_an_target)
+                    end_idx = min(next_circle_idx, br2_idx)
+                    an_block = after_an_target[:end_idx]
+                    
+                    an_match = re.search(r'(※.*?(?=<br[^>]*>|$))', an_block, flags=re.IGNORECASE | re.DOTALL)
+                    if an_match:
+                        an_text = an_match.group(1)
+                        an_text = re.sub(r'<[^>]+>', '', an_text)
+                        an_text = an_text.strip()
+                        an_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\-\+＋＝=]', '', an_text)
+                        an_text = an_text.strip()
+                        if an_text:
+                            row[spec5_idx] = "※" + an_text
+
+            if keyword_idx != -1:
+                row[keyword_idx] = str(hl) + " SOL エスオーエル"
+                
+            if part_num_idx != -1:
+                row[part_num_idx] = str(s).split('-')[0]
+            
+            if str(row[0]).strip() != "":
+                while len(row) <= 174:
+                    row.append("")
+                    
+                row[1] = "AUTO_PART"
+                row[8] = "CAPSOL"
+                row[9] = "GTIN免除"
+                row[11] = browse_node_val
+                row[20] = "SOL"
+                row[21] = "CAPSOL"
+                
+                for i in range(10):
+                    row[24 + i] = amazon_images[i]
+                row[56] = "正規品"
+                row[62] = "いいえ"
+                row[69] = "いいえ"
+                row[74] = "特になし"
+                row[80] = "車種専用フィット"
+                row[85] = "新品"
+                row[112] = "出品者出荷（デフォルト）"
+                row[113] = "0"
+                row[160] = "中国"
+                row[161] = "●保証について /商品到着後30日間の商品保証を致します。 当店側のミスでお手元に届いた商品が違った場合、初期不良の場合でも商品到着後30日間以内での対応となりますので、速やかな商品確認をお願い致します。 新たに商品のご手配をさせて頂きますが、ご手配できない場合にはご返金させて頂きます。 商品交換時に発生する費用および損害等は保証できませんのでご了承下さい。 取付ミスによる不具合や破損、加工済は保証対象外となります。 ●返品交換について / 初期不良・破損・ご注文と異なった商品をお届けした場合、送料往復負担で交換または返品をお受け致します。 ※お客様都合による返品・交換に関しましてはお客様送料負担となります。 ●ご注文のキャンセル・返品交換について /ご注文後のキャンセルいかなる場合もお受けする事が出来ません。 ※但し一度商品をお受け取り頂き、お客様送料ご負担にてご返送頂ければ承ります。 お客様のご都合による返品/交換に関してもお客様送料ご負担にてご返送頂ければ承ります。 ※詳しくはAmazon.co.jp 返品ポリシーをご確認ください。 ●その他 /パッケージにダメージがある場合が御座います。 写真撮影の為、パッケージを開封する場合が御座います。"
+                row[164] = "該当なし"
+                row[174] = "いいえ"
+                
+            try:
+                base_price = float(pr)
+            except ValueError:
+                base_price = 0.0
+                
+            if price_idx != -1:
+                row[price_idx] = str(int(base_price))
+                
+            if shipping_template_idx != -1:
+                sku_val = str(row[0])
+                if sku_val.endswith(("SSS", "VVV", "WWW", "XXX", "YYY")):
+                    row[shipping_template_idx] = sku_val[-3:]
+                else:
+                    row[shipping_template_idx] = "移行された配送パターン"
+                
+            result_data.append(row)
+            
+            suffix = ""
+            post_clean = str(post).strip()
+            
+            if post_clean == "6" or post_clean == "6.0":
+                suffix = "SSS"
+            else:
+                sw_clean = str(sw).strip()
+                try:
+                    sw_float = float(sw_clean)
+                    if sw_float == 0.0:
+                        suffix = "VVV"
+                    elif sw_float == 100.0:
+                        suffix = "WWW"
+                    elif sw_float == 1.0:
+                        suffix = "XXX"
+                    elif sw_float == 1000.0:
+                        suffix = "YYY"
+                except ValueError:
+                    if sw_clean == "0":
+                        suffix = "VVV"
+                    elif sw_clean == "100":
+                        suffix = "WWW"
+                    elif sw_clean == "1":
+                        suffix = "XXX"
+                    elif sw_clean == "1000":
+                        suffix = "YYY"
+                
+            if suffix != "":
+                dup_row = list(row)
+                new_sku = renumbered_sku + suffix
+                dup_row[sku_idx] = new_sku
+                dup_row[0] = new_sku
+                
+                dup_row[name_idx] = derived_prefix + cleansed_name
+
                 add_price = 0
                 if suffix == "SSS":
                     add_price = 180
