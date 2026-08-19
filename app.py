@@ -683,7 +683,7 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
     
     # テンプレートからヘッダーとサンプルデータ（計6行）を読み込む
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    template_path = os.path.join(base_dir, 'sample', 'amazon', 'amazon1333-New_Version.xlsm')
+    template_path = os.path.join(base_dir, 'amazon1333-New_Version.xlsm')
     
     try:
         template_df = pd.read_excel(template_path, engine='openpyxl', nrows=6, header=None, keep_default_na=False)
