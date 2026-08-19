@@ -1088,17 +1088,42 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
                         
             cleansed_name = re.sub(r'[ 　]+', ' ', cleansed_name).strip()
             
-            # --- 新規追加: Amazon用商品名への適合車種リスト動的挿入および75文字制限ループ処理 ---
-            start_idx = str(a1).find("●適合車種")
+
+            row = ['' for _ in range(num_cols)]
+            row[sku_idx] = renumbered_sku
+            row[name_idx] = base_prefix + cleansed_name
+            row[0] = renumbered_sku
+            parts_keywords = ["●商品の状態", "●適合車種", "●商品説明", "●純正品番", "●備考"]
+            combined_desc = ""
+            for kw in parts_keywords:
+                if kw == "●適合車種" and group_key in parts_combined_fitment and parts_combined_fitment[group_key]:
+                    combined_desc += "●適合車種<br>" + parts_combined_fitment[group_key]
+                    continue
+                    
+                kw_idx = a1.find(kw)
+                if kw_idx != -1:
+                    next_circle_idx = a1.find("●", kw_idx + 1)
+                    if next_circle_idx != -1:
+                        block = a1[kw_idx:next_circle_idx]
+                    else:
+                        block = a1[kw_idx:]
+                    
+                    cleaned_block = re.sub(r'</?(?!br\b)[a-zA-Z0-9]+[^>]{0,}>', '', block, flags=re.IGNORECASE)
+                    combined_desc += cleaned_block
+            
+            # --- 新規追加: Amazon用商品名への適合車種リスト動的挿入および75文字制限ループ処理 (タイミング変更版) ---
+            # ここでは完成済みのAI列である combined_desc を使用する
+            start_idx = combined_desc.find("●適合車種")
             if start_idx != -1:
-                after_keyword = str(a1)[start_idx + len("●適合車種"):]
+                after_keyword = combined_desc[start_idx + len("●適合車種"):]
                 
-                br_match = re.search(r'<br[^>]*>', after_keyword, flags=re.IGNORECASE)
-                if br_match:
-                    first_line = after_keyword[:br_match.start()]
-                else:
-                    first_line = after_keyword
-                
+                br_parts = re.split(r'<br[^>]*>', after_keyword, flags=re.IGNORECASE)
+                first_line = ""
+                for part in br_parts:
+                    if part.strip() and not part.strip().startswith("●"):
+                        first_line = part.strip()
+                        break
+                        
                 first_line_parts = re.split(r'[ 　]+', first_line.strip())
                 if len(first_line_parts) >= 2:
                     search_key = first_line_parts[0] + " " + first_line_parts[1]
@@ -1123,74 +1148,52 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
                     if insertion_index == -1:
                         insertion_index = len(cleansed_name)
                 
-                if br_match:
-                    after_first_br = after_keyword[br_match.end():]
-                    next_circle_idx = after_first_br.find("●")
-                    if next_circle_idx != -1:
-                        fitment_block = after_first_br[:next_circle_idx]
-                    else:
-                        fitment_block = after_first_br
+                first_br = re.search(r'<br[^>]*>', after_keyword, flags=re.IGNORECASE)
+                if first_br:
+                    fitment_block_full = after_keyword[first_br.end():]
+                else:
+                    fitment_block_full = after_keyword
                     
-                    kome_idx = fitment_block.find("※")
-                    if kome_idx != -1:
-                        before_kome = fitment_block[:kome_idx]
-                        last_br_before_kome = list(re.finditer(r'<br[^>]*>', before_kome, flags=re.IGNORECASE))
-                        if last_br_before_kome:
-                            fitment_list_html = before_kome[:last_br_before_kome[-1].start()]
-                        else:
-                            fitment_list_html = before_kome
+                next_circle_idx = fitment_block_full.find("●")
+                if next_circle_idx != -1:
+                    fitment_block_full = fitment_block_full[:next_circle_idx]
+                
+                kome_idx = fitment_block_full.find("※")
+                if kome_idx != -1:
+                    before_kome = fitment_block_full[:kome_idx]
+                    last_br = list(re.finditer(r'<br[^>]*>', before_kome, flags=re.IGNORECASE))
+                    if last_br:
+                        fitment_list_html = before_kome[:last_br[-1].start()]
                     else:
-                        fitment_list_html = fitment_block
-                        
-                    fitment_list_html = fitment_list_html.strip()
+                        fitment_list_html = before_kome
+                else:
+                    fitment_list_html = fitment_block_full
                     
-                    if fitment_list_html:
-                        br_blocks = re.split(r'(<br[^>]*>)', fitment_list_html, flags=re.IGNORECASE)
-                        
-                        def get_display_length(blocks):
-                            temp_html = cleansed_name[:insertion_index] + " " + "".join(blocks) + " " + cleansed_name[insertion_index:]
-                            temp_text = re.sub(r'<br[^>]*>', ' ', temp_html, flags=re.IGNORECASE)
-                            temp_text = re.sub(r'[ 　]+', ' ', temp_text).strip()
-                            return len(base_prefix) + len(temp_text)
-                        
-                        while len(br_blocks) > 1 and get_display_length(br_blocks) > 75:
+                fitment_list_html = fitment_list_html.strip()
+                
+                if fitment_list_html:
+                    br_blocks = re.split(r'(<br[^>]*>)', fitment_list_html, flags=re.IGNORECASE)
+                    
+                    def get_display_length(blocks):
+                        temp_html = cleansed_name[:insertion_index] + " " + "".join(blocks) + " " + cleansed_name[insertion_index:]
+                        temp_text = re.sub(r'<br[^>]*>', ' ', temp_html, flags=re.IGNORECASE)
+                        temp_text = re.sub(r'[ 　]+', ' ', temp_text).strip()
+                        return len(base_prefix) + len(temp_text)
+                    
+                    while len(br_blocks) > 1 and get_display_length(br_blocks) > 75:
+                        br_blocks.pop()
+                        if br_blocks:
                             br_blocks.pop()
-                            if br_blocks:
-                                br_blocks.pop()
-                                
-                        fitment_list_html = "".join(br_blocks)
-                        new_name = cleansed_name[:insertion_index] + " " + fitment_list_html + " " + cleansed_name[insertion_index:]
-                    else:
-                        new_name = cleansed_name
+                            
+                    fitment_list_html_final = "".join(br_blocks)
+                    new_name = cleansed_name[:insertion_index] + " " + fitment_list_html_final + " " + cleansed_name[insertion_index:]
                 else:
                     new_name = cleansed_name
                     
                 final_name = re.sub(r'<br[^>]*>', ' ', new_name, flags=re.IGNORECASE)
                 final_name = re.sub(r'[ 　]+', ' ', final_name).strip()
-                cleansed_name = final_name
+                row[name_idx] = base_prefix + final_name
             # ---------------------------------------------------------------------------------
-            
-            row = ['' for _ in range(num_cols)]
-            row[sku_idx] = renumbered_sku
-            row[name_idx] = base_prefix + cleansed_name
-            row[0] = renumbered_sku
-            parts_keywords = ["●商品の状態", "●適合車種", "●商品説明", "●純正品番", "●備考"]
-            combined_desc = ""
-            for kw in parts_keywords:
-                if kw == "●適合車種" and group_key in parts_combined_fitment and parts_combined_fitment[group_key]:
-                    combined_desc += "●適合車種<br>" + parts_combined_fitment[group_key]
-                    continue
-                    
-                kw_idx = a1.find(kw)
-                if kw_idx != -1:
-                    next_circle_idx = a1.find("●", kw_idx + 1)
-                    if next_circle_idx != -1:
-                        block = a1[kw_idx:next_circle_idx]
-                    else:
-                        block = a1[kw_idx:]
-                    
-                    cleaned_block = re.sub(r'</?(?!br\b)[a-zA-Z0-9]+[^>]{0,}>', '', block, flags=re.IGNORECASE)
-                    combined_desc += cleaned_block
             
             if desc_idx != -1:
                 row[desc_idx] = combined_desc
