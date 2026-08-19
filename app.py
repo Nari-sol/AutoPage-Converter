@@ -151,7 +151,7 @@ PARTS_CATEGORY_MAP = {
 # モード選択UIの追加
 mode_selection = st.sidebar.radio(
     "処理モードを選択してください",
-    ("楽天モード", "Amazonモード（開発中）")
+    ("楽天モード", "Amazonモード")
 )
 
 if mode_selection == "楽天モード":
@@ -1529,7 +1529,7 @@ if mode_selection == "楽天モード":
     if not st.session_state.get('run_rakuten', False):
         st.stop()
 
-elif mode_selection == "Amazonモード（開発中）":
+elif mode_selection == "Amazonモード":
     st.subheader("Amazon用 ファイル変換処理")
     uploaded_file_amazon = st.file_uploader(
         "処理するCSVファイルを選択してください（Amazon用）",
