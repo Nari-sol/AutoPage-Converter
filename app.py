@@ -1192,7 +1192,8 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
                     
                 final_name = re.sub(r'<br[^>]*>', ' ', new_name, flags=re.IGNORECASE)
                 final_name = re.sub(r'[ 　]+', ' ', final_name).strip()
-                row[name_idx] = base_prefix + final_name
+                cleansed_name = final_name
+                row[name_idx] = base_prefix + cleansed_name
             # ---------------------------------------------------------------------------------
             
             if desc_idx != -1:
