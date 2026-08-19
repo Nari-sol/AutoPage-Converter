@@ -151,7 +151,7 @@ PARTS_CATEGORY_MAP = {
 # モード選択UIの追加
 mode_selection = st.sidebar.radio(
     "処理モードを選択してください",
-    ("楽天モード", "Amazonモード")
+    ("楽天モード", "Amazonモード（開発中）")
 )
 
 if mode_selection == "楽天モード":
