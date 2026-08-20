@@ -902,7 +902,7 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
                         break
                         
                 if spec_text:
-                    spec_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\-\+＋＝=]', '', spec_text)
+                    spec_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\+＋＝=]', '', spec_text)
                     
             if spec_idx != -1 and spec_text:
                 row[spec_idx] = spec_text
@@ -1218,7 +1218,7 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
                         ak_text = ak_br_parts[1]
                         ak_text = re.sub(r'<[^>]+>', '', ak_text)
                         ak_text = ak_text.strip()
-                        ak_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\-\+＋＝=]', '', ak_text)
+                        ak_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\+＋＝=]', '', ak_text)
                         ak_text = ak_text.strip()
                         if ak_text:
                             row[spec2_idx] = ak_text
@@ -1232,7 +1232,7 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
                         al_text = al_br_parts[1]
                         al_text = re.sub(r'<[^>]+>', '', al_text)
                         al_text = al_text.strip()
-                        al_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\-\+＋＝=]', '', al_text)
+                        al_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\+＋＝=]', '', al_text)
                         al_text = al_text.strip()
                         if al_text:
                             row[spec3_idx] = al_text
@@ -1252,7 +1252,7 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
                         am_text = am_match.group(1)
                         am_text = re.sub(r'<[^>]+>', '', am_text)
                         am_text = am_text.strip()
-                        am_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\-\+＋＝=]', '', am_text)
+                        am_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\+＋＝=]', '', am_text)
                         am_text = am_text.strip()
                         if am_text:
                             row[spec4_idx] = "※" + am_text
@@ -1277,7 +1277,7 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
                         an_text = an_match.group(1)
                         an_text = re.sub(r'<[^>]+>', '', an_text)
                         an_text = an_text.strip()
-                        an_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\-\+＋＝=]', '', an_text)
+                        an_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\+＋＝=]', '', an_text)
                         an_text = an_text.strip()
                         if an_text:
                             row[spec5_idx] = "※" + an_text
