@@ -681,6 +681,10 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
         amazon_images = [""] * 10
     import os
     
+    # 禁止ワードの事前クリーニング処理（元データに対する一括置換）
+    # Yahoo側のデータに起因する禁止ワードがAmazon用データに混入するのを防ぐため、完全に空欄に置換して削除します。
+    df = df.replace("商品画像はイメージとなっております。", "", regex=True)
+    
     # テンプレートからヘッダーとサンプルデータ（計6行）を読み込む
     base_dir = os.path.dirname(os.path.abspath(__file__))
     template_path = os.path.join(base_dir, 'amazon1333-New_Version.xlsm')
@@ -1093,7 +1097,7 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
             row[sku_idx] = renumbered_sku
             row[name_idx] = base_prefix + cleansed_name
             row[0] = renumbered_sku
-            parts_keywords = ["●商品の状態", "●適合車種", "●商品説明", "●純正品番", "●備考"]
+            parts_keywords = ["●商品の状態", "●適合車種", "●商品説明", "●商品名", "●純正品番", "●備考"]
             combined_desc = ""
             for kw in parts_keywords:
                 if kw == "●適合車種" and group_key in parts_combined_fitment and parts_combined_fitment[group_key]:
