@@ -944,11 +944,17 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
                     row.append("")
                     
                 row[1] = "AUTO_PART"
-                row[8] = "CAPSOL"
+                
+                row[20] = "SOL"
+                if "HAPAD" in str(n).upper():
+                    row[8] = "HAPAD"
+                    row[21] = "HAPAD"
+                else:
+                    row[8] = "CAPSOL"
+                    row[21] = "CAPSOL"
+                    
                 row[9] = "GTIN免除"
                 row[11] = browse_node_val
-                row[20] = "SOL"
-                row[21] = "CAPSOL"
                 
                 for i in range(10):
                     row[24 + i] = amazon_images[i]
@@ -1297,11 +1303,17 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
                     row.append("")
                     
                 row[1] = "AUTO_PART"
-                row[8] = "CAPSOL"
+                
+                row[20] = "SOL"
+                if is_hapad:
+                    row[8] = "HAPAD"
+                    row[21] = "HAPAD"
+                else:
+                    row[8] = "CAPSOL"
+                    row[21] = "CAPSOL"
+                    
                 row[9] = "GTIN免除"
                 row[11] = browse_node_val
-                row[20] = "SOL"
-                row[21] = "CAPSOL"
                 
                 for i in range(10):
                     row[24 + i] = amazon_images[i]
