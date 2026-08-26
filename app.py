@@ -1236,14 +1236,31 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
             if spec3_idx != -1:
                 al_target_idx = a1.find("●純正品番")
                 if al_target_idx != -1:
-                    al_block = a1[al_target_idx:]
-                    al_br_parts = re.split(r'<br[^>]*>', al_block, maxsplit=2, flags=re.IGNORECASE)
-                    if len(al_br_parts) > 2:
-                        al_text = al_br_parts[1]
+                    after_al_target = a1[al_target_idx + len("●純正品番"):]
+                    first_br_match = re.search(r'<br[^>]*>', after_al_target, flags=re.IGNORECASE)
+                    if first_br_match:
+                        search_block = after_al_target[first_br_match.end():]
+                        
+                        next_circle_idx = search_block.find("●")
+                        kome_idx = search_block.find("※")
+                        br2_match = re.search(r'<br[^>]*>\s*<br[^>]*>', search_block, flags=re.IGNORECASE)
+                        
+                        end_candidates = []
+                        if next_circle_idx != -1: end_candidates.append(next_circle_idx)
+                        if kome_idx != -1: end_candidates.append(kome_idx)
+                        if br2_match: end_candidates.append(br2_match.start())
+                        
+                        if end_candidates:
+                            end_idx = min(end_candidates)
+                            al_block_inner = search_block[:end_idx]
+                        else:
+                            al_block_inner = search_block
+                            
+                        al_text = re.sub(r'<br[^>]*>', ' ', al_block_inner, flags=re.IGNORECASE)
                         al_text = re.sub(r'<[^>]+>', '', al_text)
                         al_text = al_text.strip()
                         al_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\+＋＝=]', '', al_text)
-                        al_text = al_text.strip()
+                        al_text = re.sub(r'[ 　]+', ' ', al_text).strip()
                         if al_text:
                             row[spec3_idx] = al_text
 
