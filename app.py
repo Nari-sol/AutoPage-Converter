@@ -702,6 +702,7 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
         sku_idx = -1
         name_idx = -1
         desc_idx = -1
+        package_quantity_idx = -1
         spec_idx = 35  # AJ列 (bullet_point1)
         spec2_idx = 36 # AK列 (bullet_point2)
         spec3_idx = 37 # AL列 (bullet_point3)
@@ -721,6 +722,8 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
                 name_idx = i
             elif col_name == "商品説明":
                 desc_idx = i
+            elif "入数" in str(col_name) or "Item Package Quantity" in str(col_name):
+                package_quantity_idx = i
                 
     except Exception as e:
         raise ValueError(f"テンプレートファイルの読み込みに失敗しました: {template_path}\n詳細: {str(e)}")
@@ -736,6 +739,8 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
     
     name_series = df.get('商品名', empty_series).fillna('').astype(str)
     name_series = name_series.str.replace(star_char, '', regex=False).str.replace(fullwidth_star, '', regex=False)
+    name_series = name_series.str.replace('高品質', '', regex=False)
+    name_series = name_series.str.replace(r'[ 　]+', ' ', regex=True).str.strip()
     name_list = name_series.tolist()
     
     ship_weight_series = df.get('ship-weight', empty_series).fillna('').astype(str)
@@ -759,6 +764,8 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
     
     yahoo_name_series = df.get('name', empty_series).fillna('').astype(str)
     yahoo_name_series = yahoo_name_series.str.replace(star_char, '', regex=False).str.replace(fullwidth_star, '', regex=False)
+    yahoo_name_series = yahoo_name_series.str.replace('高品質', '', regex=False)
+    yahoo_name_series = yahoo_name_series.str.replace(r'[ 　]+', ' ', regex=True).str.strip()
     yahoo_name_list = yahoo_name_series.tolist()
     
     parts_fitment_data = {}
@@ -938,6 +945,15 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
             # --- 新規追加: メーカー型番 (BD列) の抽出 ---
             if part_num_idx != -1:
                 row[part_num_idx] = str(s).split('-')[0]
+
+            # --- 新規追加: 商品の入数の自動抽出 ---
+            if package_quantity_idx != -1:
+                import unicodedata
+                qty_match = re.search(r'([0-9０-９]+)(?:点セット|本セット|個|台セット)', str(y_name))
+                if qty_match:
+                    row[package_quantity_idx] = unicodedata.normalize('NFKC', qty_match.group(1))
+                else:
+                    row[package_quantity_idx] = "1"
             
             if str(row[0]).strip() != "":
                 while len(row) <= 174:
@@ -1310,10 +1326,27 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
                             row[spec5_idx] = "※" + an_text
 
             if keyword_idx != -1:
-                row[keyword_idx] = str(hl) + " SOL エスオーエル"
+                amazon_keyword = str(hl) + " SOL エスオーエル"
+                if manufacturer_string:
+                    kw_list = re.split(r'[/ 　]+', manufacturer_string)
+                    for kw in kw_list:
+                        kw = kw.strip()
+                        if kw:
+                            amazon_keyword = re.sub(re.escape(kw), '', amazon_keyword, flags=re.IGNORECASE)
+                amazon_keyword = re.sub(r'[ 　]+', ' ', amazon_keyword).strip()
+                row[keyword_idx] = amazon_keyword
                 
             if part_num_idx != -1:
                 row[part_num_idx] = str(s).split('-')[0]
+                
+            # --- 新規追加: 商品の入数の自動抽出 ---
+            if package_quantity_idx != -1:
+                import unicodedata
+                qty_match = re.search(r'([0-9０-９]+)(?:点セット|本セット|個|台セット)', str(y_name))
+                if qty_match:
+                    row[package_quantity_idx] = unicodedata.normalize('NFKC', qty_match.group(1))
+                else:
+                    row[package_quantity_idx] = "1"
             
             if str(row[0]).strip() != "":
                 while len(row) <= 174:
