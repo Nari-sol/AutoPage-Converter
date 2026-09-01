@@ -832,7 +832,8 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
             
         formatted_lines = []
         for c_name, models in grouped_by_car.items():
-            models_str = " ".join(models)
+            unique_models = list(dict.fromkeys(models))
+            models_str = " ".join(unique_models)
             formatted_lines.append(f"{c_name} {models_str}")
             
         if formatted_lines:
