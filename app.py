@@ -1967,6 +1967,11 @@ if uploaded_file is not None:
             df['PC用商品説明文'] = np.where(pc_insert_banner != "", pc_insert_banner + df['PC用商品説明文'], df['PC用商品説明文'])
             df['スマートフォン用商品説明文'] = np.where(sp_insert_banner != "", sp_insert_banner + df['スマートフォン用商品説明文'], df['スマートフォン用商品説明文'])
             
+            # 要件1・要件2：スマートフォン用商品説明文への販促バナー動的挿入
+            rakuten_sp_banner = '<a href="https://item.rakuten.co.jp/s-o-l/grease-1000/"><img src="https://image.rakuten.co.jp/s-o-l/cabinet/10150005/to_grease.jpg" width="100%"></a><br>'
+            has_grease = df['additional3'].fillna('').astype(str).str.contains('to_grease.jpg', na=False, case=False) if 'additional3' in df.columns else pd.Series(False, index=df.index)
+            df['スマートフォン用商品説明文'] = np.where(has_grease, rakuten_sp_banner + df['スマートフォン用商品説明文'], df['スマートフォン用商品説明文'])
+            
             # 改行削除処理を以下に変更
             df['スマートフォン用商品説明文'] = df['スマートフォン用商品説明文'].replace(r'\r\n|\r|\n', ' ', regex=True)
             # タグ同士の間にできた過剰なスペースを整理（必要に応じて）
@@ -2247,6 +2252,15 @@ if uploaded_file is not None:
                     default=pc_sales_html
                 ),
                 ''
+            )
+            
+            # 要件3：PC用販売説明文への販促バナー動的挿入
+            rakuten_pc_banner = '<center><a href="https://item.rakuten.co.jp/s-o-l/grease-1000/"><img src="https://image.rakuten.co.jp/s-o-l/cabinet/10150005/to_grease.jpg" width="745px"></a></center><br><br>'
+            repeated_has_grease = has_grease.loc[repeated_index].values if 'has_grease' in locals() else pd.Series(False, index=df_normal.index)
+            df_normal['PC用販売説明文'] = np.where(
+                repeated_has_grease & mask,
+                df_normal['PC用販売説明文'].str.replace('</center>', '</center>' + rakuten_pc_banner, n=1, regex=False),
+                df_normal['PC用販売説明文']
             )
             
             df_normal['PC用商品説明文'] = expand_and_mask(df['PC用商品説明文'])
