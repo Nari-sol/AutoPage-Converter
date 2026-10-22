@@ -354,16 +354,16 @@ BANNER_RULES = [
         "must_keywords": ["HAPAD"],
         "or_keywords": ["ローター"],
         "excludes": ["PREMIUM"],
-        "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0330601774.jpg" border="0">',
-        "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0330601774.jpg" width="100%">'
+        "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0344776340.jpg" border="0"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0344776342.jpg" border="0"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0344776343.jpg" border="0">',
+        "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0344776340.jpg" width="100%"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0344776342.jpg" width="100%"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0344776343.jpg" width="100%">'
     },
     {
         "name": "HAPAD パッド",
         "must_keywords": ["HAPAD"],
         "or_keywords": ["パッド"],
         "excludes": ["PREMIUM"],
-        "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0330575433.jpg" border="0">',
-        "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0330575433.jpg" width="100%">'
+        "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0344776901.jpg" border="0"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0344776904.jpg" border="0"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0344776906.jpg" border="0">',
+        "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0344776901.jpg" width="100%"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0344776904.jpg" width="100%"><br><img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0344776906.jpg" width="100%">'
     },
     {
         "name": "CAPSOL コンデンサー",
@@ -676,6 +676,130 @@ def load_csv(file):
             
     raise ValueError("CSVファイルの読み込みに失敗しました。文字コード（UTF-8 または Shift_JIS/CP932）またはCSVのフォーマットが正しいか確認してください。")
 
+# ==============================================================================
+# 適合車種パース用 共通ヘルパー (Amazon parts条件)
+# 事前集約ループとメインループで同一ロジックを使用し、グループキーの不一致や
+# スペースの揺らぎによる適合車種ブロックの欠落を防ぐ。
+# ==============================================================================
+FITMENT_KEYWORD = "●適合車種"
+FITMENT_KEYWORD_PATTERN = re.compile(r'●[ \t\u3000\u00a0]*適合車種')
+FITMENT_LINE_SPLIT_PATTERN = re.compile(r'<\s*br[^>]*>|\r\n|\r|\n', re.IGNORECASE)
+FITMENT_TAG_PATTERN = re.compile(r'</?[a-zA-Z][^>]*>')
+FITMENT_SPACE_ENTITY_PATTERN = re.compile(r'&(?:nbsp|ensp|emsp|thinsp|#160|#xa0|#12288|#x3000);', re.IGNORECASE)
+FITMENT_INVISIBLE_PATTERN = re.compile(r'[\u200b\u200c\u200d\u2060\ufeff]')
+FITMENT_SPACE_PATTERN = re.compile(r'[\s\u3000\u00a0\u2000-\u200a\u202f\u205f]+')
+
+
+def normalize_fitment_spaces(text):
+    """全角/半角スペース、ノーブレークスペース、HTMLエンティティ等の揺らぎを半角スペース1つに統一する"""
+    text = FITMENT_SPACE_ENTITY_PATTERN.sub(' ', str(text))
+    text = FITMENT_INVISIBLE_PATTERN.sub('', text)
+    text = FITMENT_SPACE_PATTERN.sub(' ', text)
+    return text.strip()
+
+
+def split_car_and_model(line):
+    """適合車種の1行を「車種名」と「型式」に分割する（最後の空白区切りトークンを型式とみなす）"""
+    normalized = normalize_fitment_spaces(line)
+    tokens = [t for t in normalized.split(' ') if t]
+    if len(tokens) >= 2:
+        return ' '.join(tokens[:-1]), tokens[-1]
+    return normalized, ""
+
+
+def parse_fitment_block(a1_text):
+    """additional1 から適合車種ブロックを解析する
+
+    戻り値の辞書:
+        found        : 適合車種キーワードが存在したか
+        manufacturer : メーカー行（スペース正規化済み）
+        entries      : [(車種名, 型式), ...]
+        car_lines    : 車種行の生テキスト（スペース正規化済み）
+        note         : ※注意書き（タグ除去済み）
+        no_space     : スペース区切りが無かった車種行
+    """
+    result = {"found": False, "manufacturer": "", "entries": [], "car_lines": [], "note": "", "no_space": []}
+    text = str(a1_text)
+    keyword_match = FITMENT_KEYWORD_PATTERN.search(text)
+    if not keyword_match:
+        return result
+    result["found"] = True
+
+    after_keyword = text[keyword_match.end():]
+    next_circle_idx = after_keyword.find("●")
+    block = after_keyword[:next_circle_idx] if next_circle_idx != -1 else after_keyword
+
+    body_lines = []
+    for segment in FITMENT_LINE_SPLIT_PATTERN.split(block):
+        segment = FITMENT_TAG_PATTERN.sub('', segment)
+        segment = normalize_fitment_spaces(segment)
+        if not segment:
+            continue
+        if segment.startswith("※"):
+            if not result["note"]:
+                result["note"] = segment
+            # 注意書き以降は車種行として扱わない
+            break
+        body_lines.append(segment)
+
+    if not body_lines:
+        return result
+
+    result["manufacturer"] = body_lines[0]
+    for car_line in body_lines[1:]:
+        result["car_lines"].append(car_line)
+        car_name, car_model = split_car_and_model(car_line)
+        if not car_model:
+            result["no_space"].append(car_line)
+        result["entries"].append((car_name, car_model))
+    return result
+
+
+def build_fitment_lines(entries):
+    """車種ごとに型式を集約し、重複を排除した表示用の行リストを返す"""
+    import unicodedata
+
+    def dedup_key(value):
+        return normalize_fitment_spaces(unicodedata.normalize('NFKC', str(value))).upper()
+
+    grouped_by_car = {}
+    car_display_names = {}
+    for car_name, car_model in entries:
+        car_name = normalize_fitment_spaces(car_name)
+        car_model = normalize_fitment_spaces(car_model)
+        if not car_name and not car_model:
+            continue
+        car_key = dedup_key(car_name)
+        if car_key not in grouped_by_car:
+            grouped_by_car[car_key] = {}
+            car_display_names[car_key] = car_name
+        if car_model:
+            model_key = dedup_key(car_model)
+            if model_key not in grouped_by_car[car_key]:
+                grouped_by_car[car_key][model_key] = car_model
+
+    formatted_lines = []
+    for car_key, models in grouped_by_car.items():
+        display_name = car_display_names[car_key]
+        unique_models = list(models.values())
+        line_parts = [display_name] if display_name else []
+        line_parts.extend(unique_models)
+        line_text = " ".join(line_parts).strip()
+        if line_text:
+            formatted_lines.append(line_text)
+    return formatted_lines
+
+
+def build_fitment_html(formatted_lines, note):
+    """AI列（商品説明）へ差し込む適合車種本文（見出しを除く）を組み立てる"""
+    if not formatted_lines:
+        return ""
+    combined_str = "<br>".join(formatted_lines)
+    if note:
+        return combined_str + "<br>" + note + "<br><br>"
+    return combined_str + "<br><br>"
+
+
 def process_amazon_csv(df, browse_node_val="", amazon_images=None):
     if amazon_images is None:
         amazon_images = [""] * 10
@@ -774,77 +898,49 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
     parts_base_sku_counters = {}
     parts_fitment_notes = {}
     
+    fitment_parse_warnings = []
+    
     for idx, (s, a1, y_name) in enumerate(zip(sku_list, add1_list, yahoo_name_list)):
         if "parts" in str(a1):
             s_clean = str(s).replace(chr(42), '').replace(chr(65290), '')
             base_sku = s_clean.split('-')[0]
             
-            start_idx = str(a1).find("●適合車種")
-            if start_idx != -1:
-                after_keyword = str(a1)[start_idx + len("●適合車種"):]
-                next_circle_idx = after_keyword.find("●")
-                fitment_block = after_keyword[:next_circle_idx] if next_circle_idx != -1 else after_keyword
+            try:
+                fit_info = parse_fitment_block(a1)
+            except Exception as parse_error:
+                # パース失敗時も処理全体は止めず、メインループ側で元ブロックを使用する
+                fitment_parse_warnings.append(f"SKU {s_clean}: 適合車種の解析に失敗しました ({parse_error})")
+                continue
+            
+            if not fit_info["found"]:
+                continue
+            
+            manufacturer = fit_info["manufacturer"]
+            group_key = (base_sku, manufacturer)
+            
+            for no_space_line in fit_info["no_space"]:
+                fitment_parse_warnings.append(f"SKU {s_clean}: 車種と型式の区切りスペースが見つかりません ({no_space_line})")
+            
+            if fit_info["entries"]:
+                if group_key not in parts_fitment_data:
+                    parts_fitment_data[group_key] = []
+                parts_fitment_data[group_key].extend(fit_info["entries"])
+            
+            if group_key not in parts_fitment_notes or not parts_fitment_notes[group_key]:
+                parts_fitment_notes[group_key] = fit_info["note"]
                 
-                br_parts = re.split(r'<br[^>]{0,}>', fitment_block, flags=re.IGNORECASE)
-                
-                if len(br_parts) > 2:
-                    manufacturer = br_parts[1].strip()
-                    manufacturer = re.sub(r'</?[a-zA-Z0-9]+[^>]{0,}>', '', manufacturer, flags=re.IGNORECASE).strip()
-                    
-                    target_line = br_parts[2].strip()
-                    target_line = re.sub(r'</?[a-zA-Z0-9]+[^>]{0,}>', '', target_line, flags=re.IGNORECASE).strip()
-                    
-                    if target_line:
-                        if ' ' not in target_line and '　' not in target_line:
-                            import streamlit as st
-                            st.error(f"エラー: SKU {s_clean} の適合車種データに規定のスペース区切りがありません。\n対象テキスト: {target_line}")
-                            st.stop()
-                        
-                        last_space_idx = max(target_line.rfind(' '), target_line.rfind('　'))
-                        if last_space_idx != -1:
-                            car_name = target_line[:last_space_idx].strip()
-                            car_model = target_line[last_space_idx+1:].strip()
-                        else:
-                            car_name = target_line.strip()
-                            car_model = ""
-                        
-                        group_key = (base_sku, manufacturer)
-                        if group_key not in parts_fitment_data:
-                            parts_fitment_data[group_key] = []
-                        parts_fitment_data[group_key].append({"car_name": car_name, "model": car_model})
-                        
-                        if group_key not in parts_fitment_notes:
-                            note_match = re.search(r'(※.*?(?=<br[^>]*>|$))', fitment_block, flags=re.IGNORECASE | re.DOTALL)
-                            parts_fitment_notes[group_key] = note_match.group(1).strip() if note_match else ""
-                            
-                        if group_key not in parts_group_names:
-                            parts_group_names[group_key] = []
-                        parts_group_names[group_key].append(str(y_name))
+            if group_key not in parts_group_names:
+                parts_group_names[group_key] = []
+            parts_group_names[group_key].append(str(y_name))
+    
+    if fitment_parse_warnings:
+        st.warning("適合車種データに揺らぎがあったため、一部の行は区切りを補正して出力しました。\n" + "\n".join(fitment_parse_warnings[:20]))
                 
     parts_combined_fitment = {}
-    for group_key, items in parts_fitment_data.items():
-        grouped_by_car = {}
-        for item in items:
-            c_name = item["car_name"]
-            if c_name not in grouped_by_car:
-                grouped_by_car[c_name] = []
-            grouped_by_car[c_name].append(item["model"])
-            
-        formatted_lines = []
-        for c_name, models in grouped_by_car.items():
-            unique_models = list(dict.fromkeys(models))
-            models_str = " ".join(unique_models)
-            formatted_lines.append(f"{c_name} {models_str}")
-            
-        if formatted_lines:
-            combined_str = "<br>".join(formatted_lines)
-            note = parts_fitment_notes.get(group_key, "")
-            if note:
-                parts_combined_fitment[group_key] = combined_str + "<br>" + note + "<br><br>"
-            else:
-                parts_combined_fitment[group_key] = combined_str + "<br><br>"
-        else:
-            parts_combined_fitment[group_key] = ""
+    for group_key, entries in parts_fitment_data.items():
+        formatted_lines = build_fitment_lines(entries)
+        note = parts_fitment_notes.get(group_key, "")
+        parts_combined_fitment[group_key] = build_fitment_html(formatted_lines, note)
             
     parts_best_name = {}
     for group_key, names_list in parts_group_names.items():
@@ -1066,14 +1162,12 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
             s_clean = str(s).replace(chr(42), '').replace(chr(65290), '')
             base_sku = s_clean.split('-')[0]
             
-            manufacturer = ""
-            start_idx = str(a1).find("●適合車種")
-            if start_idx != -1:
-                after_keyword = str(a1)[start_idx + len("●適合車種"):]
-                br_parts = re.split(r'<br[^>]{0,}>', after_keyword, flags=re.IGNORECASE)
-                if len(br_parts) > 1:
-                    manufacturer = br_parts[1].strip()
-                    manufacturer = re.sub(r'</?[a-zA-Z0-9]+[^>]{0,}>', '', manufacturer, flags=re.IGNORECASE).strip()
+            # 事前集約ループと同一のパーサーでメーカー名を取得し、グループキーを完全一致させる
+            try:
+                fit_info = parse_fitment_block(a1)
+            except Exception:
+                fit_info = {"found": False, "manufacturer": "", "entries": [], "car_lines": [], "note": "", "no_space": []}
+            manufacturer = fit_info["manufacturer"] if fit_info["found"] else ""
             
             group_key = (base_sku, manufacturer)
             
@@ -1123,8 +1217,20 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
             parts_keywords = ["●商品の状態", "●適合車種", "●商品説明", "●商品名", "●純正品番", "●備考"]
             combined_desc = ""
             for kw in parts_keywords:
-                if kw == "●適合車種" and group_key in parts_combined_fitment and parts_combined_fitment[group_key]:
-                    combined_desc += "●適合車種<br>" + parts_combined_fitment[group_key]
+                if kw == FITMENT_KEYWORD:
+                    if not fit_info["found"]:
+                        continue
+                    fitment_body = parts_combined_fitment.get(group_key, "")
+                    if not fitment_body:
+                        # 集約結果が空の場合でも、当該行の解析結果から適合車種ブロックを必ず再構築する
+                        own_lines = build_fitment_lines(fit_info["entries"])
+                        if not own_lines:
+                            own_lines = list(fit_info["car_lines"]) or ([fit_info["manufacturer"]] if fit_info["manufacturer"] else [])
+                        fitment_body = build_fitment_html(own_lines, fit_info["note"])
+                    if not fitment_body and fit_info["note"]:
+                        fitment_body = fit_info["note"] + "<br><br>"
+                    if fitment_body:
+                        combined_desc += FITMENT_KEYWORD + "<br>" + fitment_body
                     continue
                     
                 kw_idx = a1.find(kw)
@@ -1226,12 +1332,24 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
             if desc_idx != -1:
                 row[desc_idx] = combined_desc
                 
-                aj_match = re.search(r'●適合車種<br[^>]*>(.*?)(?:<br[^>]*>)?(?:※|$)', combined_desc, flags=re.IGNORECASE | re.DOTALL)
-                if aj_match:
-                    aj_text = aj_match.group(1).strip()
-                    aj_text = re.sub(r'(?:<br[^>]*>\s*)+', ' / ', aj_text, flags=re.IGNORECASE)
-                    aj_text = re.sub(r'(?: / |/|\s)+$', '', aj_text)
-                    row[35] = aj_text
+            # 商品の仕様 AJ列: 完成済みAI列の適合車種ブロックから車種行のみを抽出する
+            # (注意書きが無い場合でも次の見出しで必ず打ち切る)
+            aj_start = combined_desc.find(FITMENT_KEYWORD)
+            if aj_start != -1:
+                aj_block = combined_desc[aj_start + len(FITMENT_KEYWORD):]
+                aj_next_circle = aj_block.find("●")
+                if aj_next_circle != -1:
+                    aj_block = aj_block[:aj_next_circle]
+                aj_kome = aj_block.find("※")
+                if aj_kome != -1:
+                    aj_block = aj_block[:aj_kome]
+                aj_lines = []
+                for aj_part in FITMENT_LINE_SPLIT_PATTERN.split(aj_block):
+                    aj_part = normalize_fitment_spaces(FITMENT_TAG_PATTERN.sub('', aj_part))
+                    if aj_part:
+                        aj_lines.append(aj_part)
+                if aj_lines:
+                    row[spec_idx] = " / ".join(aj_lines)
                     
             if spec2_idx != -1:
                 ak_target_idx = a1.find("●商品説明")
@@ -1282,24 +1400,14 @@ def process_amazon_csv(df, browse_node_val="", amazon_images=None):
                             row[spec3_idx] = al_text
 
             if spec4_idx != -1:
-                am_target_idx = a1.find("●適合車種")
-                if am_target_idx != -1:
-                    after_am_target = a1[am_target_idx + len("●適合車種"):]
-                    next_circle_idx = after_am_target.find("●")
-                    if next_circle_idx != -1:
-                        am_block = after_am_target[:next_circle_idx]
-                    else:
-                        am_block = after_am_target
-                    
-                    am_match = re.search(r'(※.*?(?=<br[^>]*>|$))', am_block, flags=re.IGNORECASE | re.DOTALL)
-                    if am_match:
-                        am_text = am_match.group(1)
-                        am_text = re.sub(r'<[^>]+>', '', am_text)
-                        am_text = am_text.strip()
-                        am_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\+＋＝=]', '', am_text)
-                        am_text = am_text.strip()
-                        if am_text:
-                            row[spec4_idx] = "※" + am_text
+                if fit_info["found"] and fit_info["note"]:
+                    am_text = fit_info["note"]
+                    am_text = re.sub(r'<[^>]+>', '', am_text)
+                    am_text = am_text.strip()
+                    am_text = re.sub(r'[【】［］（）\(\)\[\]\{\}｛｝「」『』\<\>《》!！?？★☆♪○●◎◇◆□■△▲▽▼※・~～\+＋＝=]', '', am_text)
+                    am_text = am_text.strip()
+                    if am_text:
+                        row[spec4_idx] = "※" + am_text
 
             if spec5_idx != -1:
                 an_target_idx = a1.find("●純正品番")
@@ -1971,6 +2079,12 @@ if uploaded_file is not None:
             rakuten_sp_banner = '<a href="https://item.rakuten.co.jp/s-o-l/grease-1000/"><img src="https://image.rakuten.co.jp/s-o-l/cabinet/10150005/to_grease.jpg" width="100%"></a><br>'
             has_grease = df['additional3'].fillna('').astype(str).str.contains('to_grease.jpg', na=False, case=False) if 'additional3' in df.columns else pd.Series(False, index=df.index)
             df['スマートフォン用商品説明文'] = np.where(has_grease, rakuten_sp_banner + df['スマートフォン用商品説明文'], df['スマートフォン用商品説明文'])
+            
+            # スマートフォン用ヘッダー最上部の共通画像
+            # 商品別バナー・20周年バナー・グリスバナーをすべて結合した後に先頭へ付与するため、
+            # どの条件の商品でも必ず一番最初の画像になる
+            rakuten_sp_top_image = '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/line_header.jpg" width="100%"><br>'
+            df['スマートフォン用商品説明文'] = rakuten_sp_top_image + df['スマートフォン用商品説明文'].fillna('').astype(str)
             
             # 改行削除処理を以下に変更
             df['スマートフォン用商品説明文'] = df['スマートフォン用商品説明文'].replace(r'\r\n|\r|\n', ' ', regex=True)
