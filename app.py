@@ -342,6 +342,14 @@ BANNER_RULES = [
         "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/imgrc0331357316.jpg" width="100%">'
     },
     {
+        "name": "オルタネーター",
+        "must_keywords": [],
+        "or_keywords": ["オルタ"],
+        "excludes": ["CAPSOL"],
+        "pc_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/new_alternator946.jpg" border="0">',
+        "sp_banners": '<img src="https://image.rakuten.co.jp/s-o-l/cabinet/2013rakuten/new_alternator946.jpg" width="100%">'
+    },
+    {
         "name": "CAPSOL オルタネーター",
         "must_keywords": ["CAPSOL"],
         "or_keywords": ["オルタ"],
